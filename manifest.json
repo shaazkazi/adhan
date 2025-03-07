@@ -1,0 +1,32 @@
+{
+    "name": "Adhaan",
+    "short_name": "Adhaan",
+    "description": "Adhaan, Prayer Times, Prayer, Islamic, Prayer Times App, Prayer Times App",
+    "id": "/",
+    
+    "start_url": "/",
+    "scope": "/",
+    "display": "standalone",
+    "orientation": "portrait",
+    "dir": "auto",
+    "lang": "en-US",
+    
+    "theme_color": "#041c38",
+    "background_color": "#041c38",
+    
+    "icons": [
+      {
+        "src": "/icon512_maskable.png",
+        "sizes": "512x512",
+        "type": "image/png",
+        "purpose": "maskable"
+      },
+      {
+        "src": "/icon512_rounded.png",
+        "sizes": "512x512",
+        "type": "image/png",
+        "purpose": "any"
+      }
+    ]
+  }
+  

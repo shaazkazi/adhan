@@ -11,19 +11,25 @@ const Qibla = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [hasCompass, setHasCompass] = useState(false);
+  const [permissionState, setPermissionState] = useState('pending'); // 'pending', 'granted', 'denied'
 
+  // Handle iOS permissions on component mount
   useEffect(() => {
-    // Check if device has compass (DeviceOrientationEvent)
+    // Check if device has orientation capability
     if (window.DeviceOrientationEvent) {
       setHasCompass(true);
       
-      // Request permission for iOS devices
+      // iOS 13+ requires explicit permission
       if (typeof DeviceOrientationEvent.requestPermission === 'function') {
-        document.getElementById('compass-permission').style.display = 'block';
+        // Don't auto request - wait for user interaction
+        setPermissionState('pending');
       } else {
-        // Start listening to device orientation for Android and other devices
+        // For non-iOS or older iOS, permission is implicit
+        setPermissionState('granted');
         window.addEventListener('deviceorientation', handleOrientation);
       }
+    } else {
+      setHasCompass(false);
     }
 
     return () => {
@@ -31,31 +37,42 @@ const Qibla = () => {
     };
   }, []);
 
-  // Function to request iOS permission
+  // Function to request iOS permission with user interaction
   const requestCompassPermission = async () => {
     try {
-      const permission = await DeviceOrientationEvent.requestPermission();
-      if (permission === 'granted') {
-        window.addEventListener('deviceorientation', handleOrientation);
-        document.getElementById('compass-permission').style.display = 'none';
+      // For iOS 13+
+      if (typeof DeviceOrientationEvent.requestPermission === 'function') {
+        const permission = await DeviceOrientationEvent.requestPermission();
+        if (permission === 'granted') {
+          setPermissionState('granted');
+          window.addEventListener('deviceorientation', handleOrientation);
+        } else {
+          setPermissionState('denied');
+          setError('Permission to access compass was denied');
+        }
       } else {
-        setError('Permission to access compass was denied');
+        // For other browsers that don't need explicit permission
+        setPermissionState('granted');
+        window.addEventListener('deviceorientation', handleOrientation);
       }
     } catch (err) {
-      setError('Error accessing compass: ' + err.message);
+      setPermissionState('denied');
+      setError(`Error accessing compass: ${err.message}. Please ensure you're using a secure (HTTPS) connection.`);
+      console.error('Compass permission error:', err);
     }
   };
 
   // Handle device orientation change
   const handleOrientation = (event) => {
-    // For iOS devices
+    // For iOS
     let heading = event.webkitCompassHeading || 
-    // For Android devices
+    // For Android
     (event.alpha ? 360 - event.alpha : 0);
     
     setCompassHeading(heading);
   };
 
+  // Fetch Qibla direction when location changes
   useEffect(() => {
     const getQiblaDirection = async () => {
       if (!location.latitude || !location.longitude) return;
@@ -107,65 +124,85 @@ const Qibla = () => {
               </span>
             </div>
             
-            <div className="compass-container relative w-64 h-64 mx-auto mb-8">
-  {/* Direction Labels */}
-  <div className="compass-direction north">N</div>
-  <div className="compass-direction east">E</div>
-  <div className="compass-direction south">S</div>
-  <div className="compass-direction west">W</div>
-  
-  {/* Compass */}
-  <motion.div
-    className="absolute inset-0"
-    style={{ transform: `rotate(${-compassHeading}deg)` }}
-  >
-    <img
-      src="/src/assets/compass.svg"
-      alt="Compass"
-      className="w-full h-full"
-    />
-  </motion.div>
-  
-  {/* Qibla Pointer */}
-  <motion.div
-    className="qibla-pointer"
-    style={{ transform: `rotate(${calculateQiblaRotation()}deg)` }}
-  >
-    <div className="qibla-pointer-inner">
-      <div className="qibla-pointer-dot"></div>
-      <div className="qibla-pointer-line"></div>
-      <div className="qibla-pointer-line bottom"></div>
-      <div className="qibla-pointer-dot"></div>
-    </div>
-  </motion.div>
-</div>
-
+            {/* iOS Permission Request Button */}
+            {hasCompass && permissionState === 'pending' && (
+              <div className="mb-6">
+                <p className="text-sm text-gray-600 mb-3">
+                  Compass access is required to show the Qibla direction relative to your position.
+                </p>
+                <button 
+                  onClick={requestCompassPermission}
+                  className="bg-primary-600 text-white px-4 py-2 rounded-lg"
+                >
+                  Enable Compass
+                </button>
+              </div>
+            )}
+            
+            {permissionState === 'denied' && (
+              <div className="text-center p-4 bg-yellow-50 rounded-lg mb-6">
+                <p className="text-sm text-yellow-800 mb-2">
+                  Compass access was denied. The Qibla direction will be shown relative to North, but won't update as you rotate your device.
+                </p>
+                <button 
+                  onClick={requestCompassPermission}
+                  className="bg-yellow-600 text-white px-3 py-1 text-sm rounded-lg mt-1"
+                >
+                  Try Again
+                </button>
+              </div>
+            )}
+            
+            {(permissionState === 'granted' || !hasCompass) && (
+              <div className="compass-container relative w-64 h-64 mx-auto mb-8">
+                {/* Direction Labels */}
+                <div className="compass-direction north">N</div>
+                <div className="compass-direction east">E</div>
+                <div className="compass-direction south">S</div>
+                <div className="compass-direction west">W</div>
+                
+                {/* Compass */}
+                <motion.div
+                  className="absolute inset-0"
+                  style={{ transform: `rotate(${-compassHeading}deg)` }}
+                >
+                  <img
+                    src="/src/assets/compass.svg"
+                    alt="Compass"
+                    className="w-full h-full"
+                  />
+                </motion.div>
+                
+                {/* Qibla Pointer */}
+                <motion.div
+                  className="qibla-pointer"
+                  style={{ transform: `rotate(${calculateQiblaRotation()}deg)` }}
+                >
+                  <div className="qibla-pointer-inner">
+                    <div className="qibla-pointer-dot"></div>
+                    <div className="qibla-pointer-line"></div>
+                    <div className="qibla-pointer-line bottom"></div>
+                    <div className="qibla-pointer-dot"></div>
+                  </div>
+                </motion.div>
+              </div>
+            )}
             
             <div className="text-center mb-4">
               <p className="text-2xl font-bold">{qiblaDirection ? Math.round(qiblaDirection) : 0}°</p>
               <p className="text-gray-500">from North</p>
             </div>
             
-            {hasCompass ? (
+            {hasCompass && permissionState === 'granted' ? (
               <div className="text-center text-sm text-gray-600">
                 <p>Rotate your device to find the Qibla direction.</p>
                 <p>Current heading: {Math.round(compassHeading)}°</p>
               </div>
-            ) : (
+            ) : !hasCompass ? (
               <div className="text-center text-sm text-gray-600 p-4 bg-yellow-50 rounded-lg">
                 <p>Compass not available on your device. The Qibla direction is shown relative to North.</p>
               </div>
-            )}
-            
-            {/* iOS Compass Permission Button (hidden by default) */}
-            <div id="compass-permission" style={{ display: 'none' }} className="mt-4">
-              <button 
-                onClick={requestCompassPermission}
-                className="bg-primary-600 text-white px-4 py-2 rounded-lg"
-              >
-                Enable Compass
-              </button>
-            </div>
+            ) : null}
           </div>
         )}
       </div>
