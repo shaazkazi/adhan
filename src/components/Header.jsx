@@ -18,7 +18,7 @@ const Header = () => {
           <path d="M7 21H17M9 7H15M10 17V13.5C10 12.672 10.672 12 11.5 12H12.5C13.328 12 14 12.672 14 13.5V17M12 3L19 5V11C19 15.4183 15.4183 19 11 19C6.58172 19 3 15.4183 3 11V5L12 3Z" 
           stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
         </svg>
-        <h1 className="text-2xl font-bold text-white">Adhan</h1>
+        <h1 className="text-2xl font-bold text-white">Adhaan</h1>
       </motion.div>
       
       <motion.div 
