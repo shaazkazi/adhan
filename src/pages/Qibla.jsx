@@ -167,7 +167,7 @@ const Qibla = () => {
                   style={{ transform: `rotate(${-compassHeading}deg)` }}
                 >
                   <img
-                    src="/src/assets/compass.svg"
+                    src="/compass.svg"
                     alt="Compass"
                     className="w-full h-full"
                   />
