@@ -1,5 +1,4 @@
 // Service Worker for Adhaan app
-
 const CACHE_NAME = 'adhaan-cache-v1';
 const ASSETS_TO_CACHE = [
   '/',

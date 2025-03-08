@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { FaArrowLeft, FaCog, FaBell, FaMoon, FaGlobe, FaInfoCircle } from 'react-icons/fa';
+import { FaArrowLeft, FaCog, FaBell, FaMoon, FaGlobe, FaInfoCircle, FaShareAlt } from 'react-icons/fa';
 import { useSettings } from '../contexts/SettingsContext';
 import { calculationMethods } from '../services/adhanService';
 
@@ -11,6 +11,7 @@ const Settings = () => {
   const [showToast, setShowToast] = useState(false);
   const [toastMessage, setToastMessage] = useState('');
   const [isIOS, setIsIOS] = useState(false);
+  const [isPWA, setIsPWA] = useState(false);
 
   // Define the toast display function
   const displayToast = (message) => {
@@ -21,7 +22,14 @@ const Settings = () => {
 
   // Check device type and notification permission on load
   useEffect(() => {
-    setIsIOS(/iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream);
+    const isIOSDevice = /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
+    setIsIOS(isIOSDevice);
+    
+    // Check if running as installed PWA
+    const isPWAMode = window.matchMedia('(display-mode: standalone)').matches || 
+                      window.navigator.standalone || 
+                      document.referrer.includes('android-app://');
+    setIsPWA(isPWAMode);
     
     if ('Notification' in window) {
       setPermissionStatus(Notification.permission);
@@ -30,10 +38,15 @@ const Settings = () => {
 
   const handleTimeFormat = (format) => {
     updateSettings({ timeFormat: format });
+    displayToast(`Time format changed to ${format === '12h' ? '12-hour' : '24-hour'}`);
   };
 
   const handleCalculationMethodChange = (method) => {
     updateSettings({ calculationMethod: parseInt(method) });
+    
+    // Find the method name for the toast message
+    const methodName = calculationMethods.find(m => m.id === parseInt(method))?.name || 'Custom';
+    displayToast(`Calculation method changed to ${methodName}`);
   };
 
   const handleThemeChange = (theme) => {
@@ -69,15 +82,26 @@ const Settings = () => {
     }
 
     try {
-      // For iOS PWA, we can't request permission directly
-      if (isIOS && window.navigator.standalone) {
+      // Handle iOS PWA specially
+      if (isIOS && isPWA) {
         updateSettings({
           notifications: {
             ...settings.notifications,
             enabled: true
           }
         });
-        displayToast('Notification settings updated for iOS');
+        
+        // Try to show a test notification for iOS PWA
+        try {
+          new Notification('Adhaan - Test Notification', {
+            body: 'Notifications are now enabled for prayer times',
+            icon: '/adhaan.png'
+          });
+          displayToast('Notifications enabled for iOS');
+        } catch (err) {
+          console.error('iOS notification error:', err);
+          displayToast('Notification permission may be needed');
+        }
         return;
       }
 
@@ -123,24 +147,24 @@ const Settings = () => {
   const registerServiceWorker = async () => {
     if ('serviceWorker' in navigator) {
       try {
+        // Unregister any existing service workers first to ensure clean state
+        const registrations = await navigator.serviceWorker.getRegistrations();
+        for (let registration of registrations) {
+          await registration.unregister();
+        }
+        
+        // Register the service worker
         const registration = await navigator.serviceWorker.register('/service-worker.js');
         console.log('Service Worker registered with scope:', registration.scope);
         
-        // Schedule notification for testing if needed
-        /*
-        if (registration.active) {
-          registration.active.postMessage({
-            type: 'SCHEDULE_NOTIFICATION',
-            payload: {
-              title: 'Prayer Reminder',
-              body: 'This is a test prayer notification',
-              time: new Date(Date.now() + 10000).getTime() // 10 seconds from now
-            }
-          });
-        }
-        */
+        // Notify user
+        displayToast('Notification service initialized');
+        
+        // Optional: Force update
+        registration.update();
       } catch (error) {
         console.error('Service Worker registration failed:', error);
+        displayToast('Error initializing notifications');
       }
     }
   };
@@ -156,7 +180,12 @@ const Settings = () => {
   };
 
   const sendTestNotification = () => {
-    if (!('Notification' in window) || Notification.permission !== 'granted') {
+    if (!('Notification' in window)) {
+      displayToast('Notifications not supported in this browser');
+      return;
+    }
+    
+    if (Notification.permission !== 'granted') {
       displayToast('Notification permission not granted');
       return;
     }
@@ -164,7 +193,10 @@ const Settings = () => {
     try {
       new Notification('Adhaan - Prayer Reminder', {
         body: 'This is a test notification from Adhaan app',
-        icon: '/adhaan.png'
+        icon: '/adhaan.png',
+        tag: 'test-notification',
+        timestamp: Date.now(),
+        vibrate: [100, 50, 100]
       });
       displayToast('Test notification sent');
     } catch (error) {
@@ -229,6 +261,19 @@ const Settings = () => {
               </div>
             )}
             
+            {isIOS && !isPWA && (
+              <div className="bg-yellow-50 p-3 rounded-lg text-sm text-amber-700 border border-amber-200">
+                <p className="font-medium mb-1">Add to Home Screen for Notifications</p>
+                <p className="mb-2">To receive notifications on iOS, please add this app to your home screen:</p>
+                <ol className="list-decimal pl-5 space-y-1">
+                  <li>Tap the share button <FaShareAlt className="inline mx-1" /></li>
+                  <li>Select "Add to Home Screen"</li>
+                  <li>Tap "Add" in the top right</li>
+                  <li>Open the app from your home screen</li>
+                </ol>
+              </div>
+            )}
+            
             {settings.notifications.enabled && (
               <>
                 <div>
@@ -246,20 +291,13 @@ const Settings = () => {
                   </select>
                 </div>
 
-                {!isIOS && Notification.permission === 'granted' && (
+                {Notification.permission === 'granted' && (
                   <button
                     onClick={sendTestNotification}
                     className="w-full p-2 bg-primary-100 text-primary-700 rounded-lg"
                   >
                     Send Test Notification
                   </button>
-                )}
-                
-                {isIOS && (
-                  <div className="mt-2 text-xs text-gray-500">
-                    For the best experience on iOS, please add this app to your home screen
-                    by tapping the share button and selecting "Add to Home Screen".
-                  </div>
                 )}
               </>
             )}
@@ -310,185 +348,185 @@ const Settings = () => {
                   </button>
                   <span className="w-8 text-center">{settings.adjustments[prayer]}</span>
                   <button
-                    onClick={() => updateAdjustment(prayer, settings.adjustments[prayer] + 1)}
-                    className="w-8 h-8 rounded-full bg-gray-100 flex items-center justify-center"
-                  >
-                    +
-                  </button>
-                </div>
-              </div>
-            ))}
-            <p className="text-xs text-gray-500 mt-2">
-              Adjust prayer times in minutes (positive or negative).
-            </p>
-          </div>
-        </SettingSection>
-        
-        {/* Time Format */}
-        <SettingSection
-          icon={<FaClock />}
-          title="Time Format"
-          isActive={activeSection === 'timeFormat'}
-          onClick={() => setActiveSection(activeSection === 'timeFormat' ? null : 'timeFormat')}
-        >
-          <div className="flex space-x-4">
-            <button
-              onClick={() => handleTimeFormat('12h')}
-              className={`px-4 py-2 rounded-lg ${
-                settings.timeFormat === '12h'
-                  ? 'active'
-                  : 'inactive'
-              }`}
-            >
-              12 Hour
-            </button>
-            <button
-              onClick={() => handleTimeFormat('24h')}
-              className={`px-4 py-2 rounded-lg ${
-                settings.timeFormat === '24h'
-                  ? 'active'
-                  : 'inactive'
-              }`}
-            >
-              24 Hour
-            </button>
-          </div>
-        </SettingSection>
-        
-        {/* Theme */}
-        <SettingSection
-          icon={<FaMoon />}
-          title="Theme"
-          isActive={activeSection === 'theme'}
-          onClick={() => setActiveSection(activeSection === 'theme' ? null : 'theme')}
-        >
-          <div className="flex space-x-4">
-            <button
-              onClick={() => handleThemeChange('light')}
-              className={`px-4 py-2 rounded-lg ${
-                settings.theme === 'light'
-                  ? 'active'
-                  : 'inactive'
-              }`}
-            >
-              Light
-            </button>
-            <button
-              onClick={() => handleThemeChange('dark')}
-              className={`px-4 py-2 rounded-lg ${
-                settings.theme === 'dark'
-                  ? 'active'
-                  : 'inactive'
-              }`}
-            >
-              Dark
-            </button>
-          </div>
-        </SettingSection>
-        
-        {/* Language */}
-        <SettingSection
-          icon={<FaGlobe />}
-          title="Language"
-          isActive={activeSection === 'language'}
-          onClick={() => setActiveSection(activeSection === 'language' ? null : 'language')}
-        >
-          <div className="grid grid-cols-2 gap-2">
-            <button
-                            onClick={() => handleLanguageChange('en')}
-                            className={`px-4 py-2 rounded-lg ${
-                              settings.language === 'en'
-                                ? 'active'
-                                : 'inactive'
-                            }`}
-                          >
-                            English
-                          </button>
-                          <button
-                            onClick={() => handleLanguageChange('ar')}
-                            className={`px-4 py-2 rounded-lg ${
-                              settings.language === 'ar'
-                                ? 'active'
-                                : 'inactive'
-                            }`}
-                          >
-                            Arabic
-                          </button>
-                        </div>
-                      </SettingSection>
-                      
-                      {/* About */}
-                      <SettingSection
-                        icon={<FaInfoCircle />}
-                        title="About"
-                        isActive={activeSection === 'about'}
-                        onClick={() => setActiveSection(activeSection === 'about' ? null : 'about')}
-                      >
-                        <div className="text-sm text-gray-600">
-                          <p className="mb-2">Adhan - Prayer Times App</p>
-                          <p className="mb-2">Version 1.0.0</p>
-                          <p className="mb-2">Prayer times powered by AlAdhan.com API.</p>
-                          <a
-                            href="https://github.com/yourusername/adhaan-app"
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            className="text-primary-600 hover:underline"
-                          >
-                            GitHub Repository
-                          </a>
-                        </div>
-                      </SettingSection>
-                    </div>
+                                        onClick={() => updateAdjustment(prayer, settings.adjustments[prayer] + 1)}
+                                        className="w-8 h-8 rounded-full bg-gray-100 flex items-center justify-center"
+                                      >
+                                        +
+                                      </button>
+                                    </div>
+                                  </div>
+                                ))}
+                                <p className="text-xs text-gray-500 mt-2">
+                                  Adjust prayer times in minutes (positive or negative).
+                                </p>
+                              </div>
+                            </SettingSection>
+                            
+                            {/* Time Format */}
+                            <SettingSection
+                              icon={<FaClock />}
+                              title="Time Format"
+                              isActive={activeSection === 'timeFormat'}
+                              onClick={() => setActiveSection(activeSection === 'timeFormat' ? null : 'timeFormat')}
+                            >
+                              <div className="flex space-x-4">
+                                <button
+                                  onClick={() => handleTimeFormat('12h')}
+                                  className={`px-4 py-2 rounded-lg ${
+                                    settings.timeFormat === '12h'
+                                      ? 'active'
+                                      : 'inactive'
+                                  }`}
+                                >
+                                  12 Hour
+                                </button>
+                                <button
+                                  onClick={() => handleTimeFormat('24h')}
+                                  className={`px-4 py-2 rounded-lg ${
+                                    settings.timeFormat === '24h'
+                                      ? 'active'
+                                      : 'inactive'
+                                  }`}
+                                >
+                                  24 Hour
+                                </button>
+                              </div>
+                            </SettingSection>
+                            
+                            {/* Theme */}
+                            <SettingSection
+                              icon={<FaMoon />}
+                              title="Theme"
+                              isActive={activeSection === 'theme'}
+                              onClick={() => setActiveSection(activeSection === 'theme' ? null : 'theme')}
+                            >
+                              <div className="flex space-x-4">
+                                <button
+                                  onClick={() => handleThemeChange('light')}
+                                  className={`px-4 py-2 rounded-lg ${
+                                    settings.theme === 'light'
+                                      ? 'active'
+                                      : 'inactive'
+                                  }`}
+                                >
+                                  Light
+                                </button>
+                                <button
+                                  onClick={() => handleThemeChange('dark')}
+                                  className={`px-4 py-2 rounded-lg ${
+                                    settings.theme === 'dark'
+                                      ? 'active'
+                                      : 'inactive'
+                                  }`}
+                                >
+                                  Dark
+                                </button>
+                              </div>
+                            </SettingSection>
+                            
+                            {/* Language */}
+                            <SettingSection
+                              icon={<FaGlobe />}
+                              title="Language"
+                              isActive={activeSection === 'language'}
+                              onClick={() => setActiveSection(activeSection === 'language' ? null : 'language')}
+                            >
+                              <div className="grid grid-cols-2 gap-2">
+                                <button
+                                  onClick={() => handleLanguageChange('en')}
+                                  className={`px-4 py-2 rounded-lg ${
+                                    settings.language === 'en'
+                                      ? 'active'
+                                      : 'inactive'
+                                  }`}
+                                >
+                                  English
+                                </button>
+                                <button
+                                  onClick={() => handleLanguageChange('ar')}
+                                  className={`px-4 py-2 rounded-lg ${
+                                    settings.language === 'ar'
+                                      ? 'active'
+                                      : 'inactive'
+                                  }`}
+                                >
+                                  Arabic
+                                </button>
+                              </div>
+                            </SettingSection>
+                            
+                            {/* About */}
+                            <SettingSection
+                              icon={<FaInfoCircle />}
+                              title="About"
+                              isActive={activeSection === 'about'}
+                              onClick={() => setActiveSection(activeSection === 'about' ? null : 'about')}
+                            >
+                              <div className="text-sm text-gray-600">
+                                <p className="mb-2">Adhan - Prayer Times App</p>
+                                <p className="mb-2">Version 1.0.0</p>
+                                <p className="mb-2">Prayer times powered by AlAdhan.com API.</p>
+                                <a
+                                  href="https://github.com/yourusername/adhaan-app"
+                                  target="_blank"
+                                  rel="noopener noreferrer"
+                                  className="text-primary-600 hover:underline"
+                                >
+                                  GitHub Repository
+                                </a>
+                              </div>
+                            </SettingSection>
+                          </div>
+                          
+                          {/* If you need to create a service worker file, inform the user */}
+                          {settings.notifications.enabled && 'serviceWorker' in navigator && !navigator.serviceWorker.controller && (
+                            <div className="text-center mt-4 text-sm text-gray-500">
+                              Initializing notifications system...
+                            </div>
+                          )}
+                        </motion.div>
+                      );
+                    };
                     
-                    {/* If you need to create a service worker file, inform the user */}
-                    {settings.notifications.enabled && 'serviceWorker' in navigator && !navigator.serviceWorker.controller && (
-                      <div className="text-center mt-4 text-sm text-gray-500">
-                        Initializing notifications system...
-                      </div>
-                    )}
-                  </motion.div>
-                );
-              };
-              
-              const SettingSection = ({ icon, title, children, isActive, onClick }) => {
-                return (
-                  <div className="border-b border-gray-100 last:border-b-0">
-                    <div
-                      className="p-4 flex justify-between items-center cursor-pointer"
-                      onClick={onClick}
-                    >
-                      <div className="flex items-center">
-                        <span className="text-primary-500 mr-3">{icon}</span>
-                        <span>{title}</span>
-                      </div>
-                      <motion.div
-                        animate={{ rotate: isActive ? 90 : 0 }}
-                        transition={{ duration: 0.2 }}
-                      >
-                        <FaArrowLeft className="transform rotate-180 text-gray-400" />
-                      </motion.div>
-                    </div>
+                    const SettingSection = ({ icon, title, children, isActive, onClick }) => {
+                      return (
+                        <div className="border-b border-gray-100 last:border-b-0">
+                          <div
+                            className="p-4 flex justify-between items-center cursor-pointer"
+                            onClick={onClick}
+                          >
+                            <div className="flex items-center">
+                              <span className="text-primary-500 mr-3">{icon}</span>
+                              <span>{title}</span>
+                            </div>
+                            <motion.div
+                              animate={{ rotate: isActive ? 90 : 0 }}
+                              transition={{ duration: 0.2 }}
+                            >
+                              <FaArrowLeft className="transform rotate-180 text-gray-400" />
+                            </motion.div>
+                          </div>
+                          
+                          {isActive && (
+                            <motion.div
+                              className="px-4 pb-4"
+                              initial={{ opacity: 0, height: 0 }}
+                              animate={{ opacity: 1, height: 'auto' }}
+                              exit={{ opacity: 0, height: 0 }}
+                            >
+                              {children}
+                            </motion.div>
+                          )}
+                        </div>
+                      );
+                    };
                     
-                    {isActive && (
-                      <motion.div
-                        className="px-4 pb-4"
-                        initial={{ opacity: 0, height: 0 }}
-                        animate={{ opacity: 1, height: 'auto' }}
-                        exit={{ opacity: 0, height: 0 }}
-                      >
-                        {children}
-                      </motion.div>
-                    )}
-                  </div>
-                );
-              };
-              
-              // Define FaClock since it was used in the component
-              const FaClock = () => (
-                <svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 512 512">
-                  <path d="M256 512C114.6 512 0 397.4 0 256S114.6 0 256 0S512 114.6 512 256s-114.6 256-256 256zM232 120V256c0 8 4 15.5 10.7 20l96 64c11 7.4 25.9 4.4 33.3-6.7s4.4-25.9-6.7-33.3L280 239.2V120c0-13.3-10.7-24-24-24s-24 10.7-24 24z" fill="currentColor"/>
-                </svg>
-              );
-              
-              export default Settings;
-              
+                    // Define FaClock since it was used in the component
+                    const FaClock = () => (
+                      <svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 512 512">
+                        <path d="M256 512C114.6 512 0 397.4 0 256S114.6 0 256 0S512 114.6 512 256s-114.6 256-256 256zM232 120V256c0 8 4 15.5 10.7 20l96 64c11 7.4 25.9 4.4 33.3-6.7s4.4-25.9-6.7-33.3L280 239.2V120c0-13.3-10.7-24-24-24s-24 10.7-24 24z" fill="currentColor"/>
+                      </svg>
+                    );
+                    
+                    export default Settings;
+                    
