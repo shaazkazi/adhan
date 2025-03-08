@@ -12,6 +12,13 @@ const Settings = () => {
   const [toastMessage, setToastMessage] = useState('');
   const [isIOS, setIsIOS] = useState(false);
 
+  // Define the toast display function
+  const displayToast = (message) => {
+    setToastMessage(message);
+    setShowToast(true);
+    setTimeout(() => setShowToast(false), 3000);
+  };
+
   // Check device type and notification permission on load
   useEffect(() => {
     setIsIOS(/iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream);
@@ -31,12 +38,12 @@ const Settings = () => {
 
   const handleThemeChange = (theme) => {
     updateSettings({ theme });
-    showToast(`${theme.charAt(0).toUpperCase() + theme.slice(1)} theme applied`);
+    displayToast(`${theme.charAt(0).toUpperCase() + theme.slice(1)} theme applied`);
   };
 
   const handleLanguageChange = (language) => {
     updateSettings({ language });
-    showToast(`Language changed to ${language === 'en' ? 'English' : 'Arabic'}`);
+    displayToast(`Language changed to ${language === 'en' ? 'English' : 'Arabic'}`);
   };
 
   const handleNotificationToggle = () => {
@@ -51,13 +58,13 @@ const Settings = () => {
           enabled: false
         }
       });
-      showToast('Notifications disabled');
+      displayToast('Notifications disabled');
     }
   };
 
   const requestNotificationPermission = async () => {
     if (!('Notification' in window)) {
-      showToast('Notifications not supported in this browser');
+      displayToast('Notifications not supported in this browser');
       return;
     }
 
@@ -70,7 +77,7 @@ const Settings = () => {
             enabled: true
           }
         });
-        showToast('Notification settings updated for iOS');
+        displayToast('Notification settings updated for iOS');
         return;
       }
 
@@ -83,7 +90,7 @@ const Settings = () => {
           }
         });
         registerServiceWorker();
-        showToast('Notifications enabled');
+        displayToast('Notifications enabled');
         return;
       }
 
@@ -99,17 +106,17 @@ const Settings = () => {
             }
           });
           registerServiceWorker();
-          showToast('Notifications enabled');
+          displayToast('Notifications enabled');
         } else {
-          showToast('Notification permission denied');
+          displayToast('Notification permission denied');
         }
       } else {
         // Permission already denied
-        showToast('Please enable notifications in browser settings');
+        displayToast('Please enable notifications in browser settings');
       }
     } catch (error) {
       console.error('Error requesting permission:', error);
-      showToast('Error enabling notifications');
+      displayToast('Error enabling notifications');
     }
   };
 
@@ -145,19 +152,12 @@ const Settings = () => {
         beforePrayer: parseInt(minutes)
       }
     });
-    showToast(`Notifications will be sent ${minutes} minutes before prayer`);
-  };
-
-  // With this:
-const displayToast = (message) => {
-    setToastMessage(message);
-    setShowToast(true);
-    setTimeout(() => setShowToast(false), 3000);
+    displayToast(`Notifications will be sent ${minutes} minutes before prayer`);
   };
 
   const sendTestNotification = () => {
     if (!('Notification' in window) || Notification.permission !== 'granted') {
-      showToast('Notification permission not granted');
+      displayToast('Notification permission not granted');
       return;
     }
 
@@ -166,10 +166,10 @@ const displayToast = (message) => {
         body: 'This is a test notification from Adhaan app',
         icon: '/adhaan.png'
       });
-      showToast('Test notification sent');
+      displayToast('Test notification sent');
     } catch (error) {
       console.error('Error sending test notification:', error);
-      showToast('Error sending test notification');
+      displayToast('Error sending test notification');
     }
   };
 
@@ -183,7 +183,7 @@ const displayToast = (message) => {
       {/* Toast notification */}
       <AnimatePresence>
         {showToast && (
-          <motion.div 
+          <motion.div
             className="fixed bottom-20 left-0 right-0 mx-auto w-4/5 max-w-sm bg-bg-card text-text-primary p-3 rounded-lg shadow-md border border-border z-50 text-center"
             initial={{ opacity: 0, y: 50 }}
             animate={{ opacity: 1, y: 0 }}
@@ -257,7 +257,7 @@ const displayToast = (message) => {
                 
                 {isIOS && (
                   <div className="mt-2 text-xs text-gray-500">
-                    For the best experience on iOS, please add this app to your home screen 
+                    For the best experience on iOS, please add this app to your home screen
                     by tapping the share button and selecting "Add to Home Screen".
                   </div>
                 )}
@@ -395,99 +395,100 @@ const displayToast = (message) => {
         >
           <div className="grid grid-cols-2 gap-2">
             <button
-              onClick={() => handleLanguageChange('en')}
-              className={`px-4 py-2 rounded-lg ${
-                settings.language === 'en'
-                  ? 'active'
-                  : 'inactive'
-              }`}
-            >
-              English
-            </button>
-            <button
-              onClick={() => handleLanguageChange('ar')}
-              className={`px-4 py-2 rounded-lg ${
-                settings.language === 'ar'
-                  ? 'active'
-                  : 'inactive'
-              }`}
-            >
-              Arabic
-            </button>
-          </div>
-        </SettingSection>
-        
-        {/* About */}
-        <SettingSection
-          icon={<FaInfoCircle />}
-          title="About"
-          isActive={activeSection === 'about'}
-          onClick={() => setActiveSection(activeSection === 'about' ? null : 'about')}
-        >
-          <div className="text-sm text-gray-600">
-            <p className="mb-2">Adhan - Prayer Times App</p>
-            <p className="mb-2">Version 1.0.0</p>
-            <p className="mb-2">Prayer times powered by AlAdhan.com API.</p>
-            <a 
-              href="https://github.com/yourusername/adhaan-app" 
-              target="_blank" 
-              rel="noopener noreferrer"
-              className="text-primary-600 hover:underline"
-            >
-              GitHub Repository
-            </a>
-          </div>
-        </SettingSection>
-      </div>
-      
-      {/* If you need to create a service worker file, inform the user */}
-      {settings.notifications.enabled && 'serviceWorker' in navigator && !navigator.serviceWorker.controller && (
-        <div className="text-center mt-4 text-sm text-gray-500">
-          Initializing notifications system...
-        </div>
-      )}
-    </motion.div>
-  );
-};
-
-const SettingSection = ({ icon, title, children, isActive, onClick }) => {
-  return (
-    <div className="border-b border-gray-100 last:border-b-0">
-      <div
-        className="p-4 flex justify-between items-center cursor-pointer"
-        onClick={onClick}
-      >
-        <div className="flex items-center">
-          <span className="text-primary-500 mr-3">{icon}</span>
-          <span>{title}</span>
-        </div>
-        <motion.div
-          animate={{ rotate: isActive ? 90 : 0 }}
-          transition={{ duration: 0.2 }}
-        >
-          <FaArrowLeft className="transform rotate-180 text-gray-400" />
-        </motion.div>
-      </div>
-      
-      {isActive && (
-        <motion.div
-          className="px-4 pb-4"
-          initial={{ opacity: 0, height: 0 }}
-          animate={{ opacity: 1, height: 'auto' }}
-          exit={{ opacity: 0, height: 0 }}
-        >
-          {children}
-        </motion.div>
-      )}
-    </div>
-  );
-};
-
-// Define FaClock since it was used in the component
-const FaClock = () => (
-  <svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 512 512">
-    <path d="M256 512C114.6 512 0 397.4 0 256S114.6 0 256 0S512 114.6 512 256s-114.6 256-256 256zM232 120V256c0 8 4 15.5 10.7 20l96 64c11 7.4 25.9 4.4 33.3-6.7s4.4-25.9-6.7-33.3L280 239.2V120c0-13.3-10.7-24-24-24s-24 10.7-24 24z" fill="currentColor"/>
-  </svg>
-);
-
-export default Settings;
+                            onClick={() => handleLanguageChange('en')}
+                            className={`px-4 py-2 rounded-lg ${
+                              settings.language === 'en'
+                                ? 'active'
+                                : 'inactive'
+                            }`}
+                          >
+                            English
+                          </button>
+                          <button
+                            onClick={() => handleLanguageChange('ar')}
+                            className={`px-4 py-2 rounded-lg ${
+                              settings.language === 'ar'
+                                ? 'active'
+                                : 'inactive'
+                            }`}
+                          >
+                            Arabic
+                          </button>
+                        </div>
+                      </SettingSection>
+                      
+                      {/* About */}
+                      <SettingSection
+                        icon={<FaInfoCircle />}
+                        title="About"
+                        isActive={activeSection === 'about'}
+                        onClick={() => setActiveSection(activeSection === 'about' ? null : 'about')}
+                      >
+                        <div className="text-sm text-gray-600">
+                          <p className="mb-2">Adhan - Prayer Times App</p>
+                          <p className="mb-2">Version 1.0.0</p>
+                          <p className="mb-2">Prayer times powered by AlAdhan.com API.</p>
+                          <a
+                            href="https://github.com/yourusername/adhaan-app"
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="text-primary-600 hover:underline"
+                          >
+                            GitHub Repository
+                          </a>
+                        </div>
+                      </SettingSection>
+                    </div>
+                    
+                    {/* If you need to create a service worker file, inform the user */}
+                    {settings.notifications.enabled && 'serviceWorker' in navigator && !navigator.serviceWorker.controller && (
+                      <div className="text-center mt-4 text-sm text-gray-500">
+                        Initializing notifications system...
+                      </div>
+                    )}
+                  </motion.div>
+                );
+              };
+              
+              const SettingSection = ({ icon, title, children, isActive, onClick }) => {
+                return (
+                  <div className="border-b border-gray-100 last:border-b-0">
+                    <div
+                      className="p-4 flex justify-between items-center cursor-pointer"
+                      onClick={onClick}
+                    >
+                      <div className="flex items-center">
+                        <span className="text-primary-500 mr-3">{icon}</span>
+                        <span>{title}</span>
+                      </div>
+                      <motion.div
+                        animate={{ rotate: isActive ? 90 : 0 }}
+                        transition={{ duration: 0.2 }}
+                      >
+                        <FaArrowLeft className="transform rotate-180 text-gray-400" />
+                      </motion.div>
+                    </div>
+                    
+                    {isActive && (
+                      <motion.div
+                        className="px-4 pb-4"
+                        initial={{ opacity: 0, height: 0 }}
+                        animate={{ opacity: 1, height: 'auto' }}
+                        exit={{ opacity: 0, height: 0 }}
+                      >
+                        {children}
+                      </motion.div>
+                    )}
+                  </div>
+                );
+              };
+              
+              // Define FaClock since it was used in the component
+              const FaClock = () => (
+                <svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 512 512">
+                  <path d="M256 512C114.6 512 0 397.4 0 256S114.6 0 256 0S512 114.6 512 256s-114.6 256-256 256zM232 120V256c0 8 4 15.5 10.7 20l96 64c11 7.4 25.9 4.4 33.3-6.7s4.4-25.9-6.7-33.3L280 239.2V120c0-13.3-10.7-24-24-24s-24 10.7-24 24z" fill="currentColor"/>
+                </svg>
+              );
+              
+              export default Settings;
+              
