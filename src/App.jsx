@@ -6,10 +6,11 @@ import { motion, AnimatePresence } from 'framer-motion';
 import Home from './pages/Home';
 import Qibla from './pages/Qibla';
 import Settings from './pages/Settings';
+import Ramadan from './pages/Ramadan'; // Add Ramadan page import
 
 // Components
 import Header from './components/Header';
-import { FaMosque, FaCompass, FaCog } from 'react-icons/fa';
+import { FaMosque, FaCompass, FaCog, FaMoon } from 'react-icons/fa'; // Add FaMoon icon
 
 // Contexts
 import { LocationProvider } from './contexts/LocationContext';
@@ -31,44 +32,45 @@ function App() {
 // Page transition backdrop to prevent white flash
 function PageTransitionBackdrop() {
   const location = useLocation();
-  
+ 
   useEffect(() => {
     // Add a class to body during transitions to prevent white flash
     document.body.classList.add('page-transitioning');
-    
+   
     // Remove class after transition completes
     const timer = setTimeout(() => {
       document.body.classList.remove('page-transitioning');
     }, 300);
-    
+   
     return () => {
       clearTimeout(timer);
       document.body.classList.remove('page-transitioning');
     };
   }, [location.pathname]);
-  
+ 
   return null;
 }
 
 // App root with access to router hooks
 function AppRoot() {
   const location = useLocation();
-  
+ 
   // Determine active tab based on current path
   const getActiveTab = (path) => {
     if (path.startsWith('/qibla')) return 'qibla';
+    if (path.startsWith('/ramadan')) return 'ramadan'; // Add ramadan check
     if (path.startsWith('/settings')) return 'settings';
     return 'home';
   };
-  
+ 
   const activeTab = getActiveTab(location.pathname);
-  
+ 
   return (
     <div className="min-h-screen bg-bg-primary text-text-primary">
       <PageTransitionBackdrop />
       <div className="app-container">
         <Header />
-        
+       
         <main className="flex-1 overflow-hidden pb-20">
           <AnimatePresence mode="wait" initial={false}>
             <motion.div
@@ -76,22 +78,23 @@ function AppRoot() {
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
-              transition={{ 
+              transition={{
                 duration: 0.2,
-                ease: "easeInOut" 
+                ease: "easeInOut"
               }}
               className="page-content"
             >
               <Routes location={location}>
                 <Route path="/" element={<Home />} />
                 <Route path="/qibla" element={<Qibla />} />
+                <Route path="/ramadan" element={<Ramadan />} /> {/* Add Ramadan route */}
                 <Route path="/settings" element={<Settings />} />
                 <Route path="*" element={<Navigate to="/" replace />} />
               </Routes>
             </motion.div>
           </AnimatePresence>
         </main>
-        
+       
         <nav className="nav-bar">
           <NavButton
             icon={<FaMosque className="text-xl" />}
@@ -104,6 +107,13 @@ function AppRoot() {
             label="Qibla"
             isActive={activeTab === 'qibla'}
             to="/qibla"
+          />
+          {/* Add Ramadan NavButton */}
+          <NavButton
+            icon={<FaMoon className="text-xl" />}
+            label="Ramadan"
+            isActive={activeTab === 'ramadan'}
+            to="/ramadan"
           />
           <NavButton
             icon={<FaCog className="text-xl" />}
@@ -125,13 +135,13 @@ function NavButton({ icon, label, isActive, to }) {
       className={`nav-item ${isActive ? 'active' : ''}`}
       preventScrollReset={true}
     >
-      <motion.div 
+      <motion.div
         whileTap={{ scale: 0.9 }}
         className="flex flex-col items-center"
       >
         <span className="text-xl mb-1">{icon}</span>
         <span className="nav-item-text">{label}</span>
-        
+       
         {isActive && (
           <motion.div
             className="h-1 w-4 bg-accent rounded-full mt-1"
