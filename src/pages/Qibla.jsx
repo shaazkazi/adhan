@@ -155,39 +155,40 @@ const Qibla = () => {
             )}
             
             {(permissionState === 'granted' || !hasCompass) && (
-              <div className="compass-container relative w-64 h-64 mx-auto mb-8">
-                {/* Direction Labels */}
-                <div className="compass-direction north">N</div>
-                <div className="compass-direction east">E</div>
-                <div className="compass-direction south">S</div>
-                <div className="compass-direction west">W</div>
-                
-                {/* Compass */}
-                <motion.div
-                  className="absolute inset-0"
-                  style={{ transform: `rotate(${-compassHeading}deg)` }}
-                >
-                  <img
-                    src="/compass.svg"
-                    alt="Compass"
-                    className="w-full h-full"
-                  />
-                </motion.div>
-                
-                {/* Qibla Pointer */}
-                <motion.div
-                  className="qibla-pointer"
-  style={{ transform: `rotate(${calculateQiblaRotation()}deg)` }}
->
-  <div className="qibla-pointer-inner">
-    <div className="qibla-pointer-dot"></div>
-    <div className="qibla-pointer-line"></div>
-    <div className="qibla-pointer-line bottom"></div>
-    <div className="qibla-pointer-dot"></div>
+  <div className="compass-container relative w-64 h-64 mx-auto mb-8">
+    {/* Direction Labels - added z-index to make sure they're visible */}
+    <div className="compass-direction north z-10">N</div>
+    <div className="compass-direction east z-10">E</div>
+    <div className="compass-direction south z-10">S</div>
+    <div className="compass-direction west z-10">W</div>
+    
+    {/* Compass - reduced size to 90% */}
+    <motion.div
+      className="absolute inset-0 flex items-center justify-center"
+      style={{ transform: `rotate(${-compassHeading}deg)` }}
+    >
+      <img
+        src="/compass.svg"
+        alt="Compass"
+        className="w-[90%] h-[90%]" // Changed from w-full h-full to 90%
+      />
+    </motion.div>
+    
+    {/* Qibla Pointer */}
+    <motion.div
+      className="qibla-pointer"
+      style={{ transform: `rotate(${calculateQiblaRotation()}deg)` }}
+    >
+      <div className="qibla-pointer-inner">
+        <div className="qibla-pointer-dot"></div>
+        <div className="qibla-pointer-line"></div>
+        <div className="qibla-pointer-line bottom"></div>
+        <div className="qibla-pointer-dot"></div>
+      </div>
+    </motion.div>
   </div>
-</motion.div>
-              </div>
-            )}
+)}
+
             
             <div className="text-center mb-4">
               <p className="text-2xl font-bold">{qiblaDirection ? Math.round(qiblaDirection) : 0}°</p>

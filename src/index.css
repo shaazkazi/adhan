@@ -640,10 +640,11 @@ html, body, #root {
   color: var(--color-accent);
 }
 
-.compass-direction.north { top: 10px; left: 50%; transform: translateX(-50%); }
-.compass-direction.east { right: 10px; top: 50%; transform: translateY(-50%); }
-.compass-direction.south { bottom: 10px; left: 50%; transform: translateX(-50%); }
-.compass-direction.west { left: 10px; top: 50%; transform: translateY(-50%); }
+/* Direction labels - adjust the positioning to move them further out */
+.compass-direction.north { top: 5px; left: 50%; transform: translateX(-50%); }
+.compass-direction.east { right: 5px; top: 50%; transform: translateY(-50%); }
+.compass-direction.south { bottom: 5px; left: 50%; transform: translateX(-50%); }
+.compass-direction.west { left: 5px; top: 50%; transform: translateY(-50%); }
 
 /* Qibla pointer styling */
 .qibla-pointer {
@@ -920,4 +921,159 @@ html, body, #root {
 
 .light-theme .location-search-result:hover {
   background-color: rgba(0, 0, 0, 0.05);
+}
+/* Smooth settings section animations */
+.settings-section-content {
+  will-change: height, opacity;
+  transform-origin: top;
+  pointer-events: none; /* Prevents interaction during animation */
+}
+
+.settings-section-content .settings-section-inner {
+  padding-top: 0.5rem;
+  pointer-events: auto; /* Re-enable interaction for content */
+}
+
+/* Improve animation performance */
+.settings-section-content * {
+  will-change: opacity;
+}
+
+/* Make sure rotate animation is smooth */
+.settings-card motion.div {
+  will-change: transform;
+  transform-origin: center;
+}
+
+/* Optimize performance for mobile */
+@media (max-width: 768px) {
+  .settings-section-content,
+  .settings-section-content * {
+    -webkit-backface-visibility: hidden;
+    backface-visibility: hidden;
+  }
+}
+/* Enhanced smooth settings animations */
+.settings-section {
+  position: relative;
+  contain: content; /* Improves performance */
+}
+
+.settings-section-wrapper {
+  will-change: max-height, opacity;
+  position: relative;
+  transform: translateZ(0); /* Forces GPU acceleration */
+}
+
+.settings-section-content {
+  padding-top: 0.5rem;
+  transform: translateZ(0);
+  contain: layout; /* Prevents broader layout shifts */
+}
+
+/* Prevent animation lag on mobiles */
+@media (max-width: 768px) {
+  .settings-section-wrapper, 
+  .settings-section-content {
+    -webkit-backface-visibility: hidden;
+    -webkit-perspective: 1000;
+    backface-visibility: hidden;
+    perspective: 1000;
+    transform: translate3d(0, 0, 0);
+  }
+}
+/* First update PrayerCard.jsx to remove the text indicators */
+/* Then add these styles: */
+
+.prayer-card.next {
+  position: relative;
+  border: 1px solid var(--color-accent);
+  box-shadow: 0 0 20px rgba(255, 193, 7, 0.1);
+}
+
+.prayer-card.next::before {
+  display: none; /* Remove existing indicator */
+}
+
+/* Add floating dot indicator */
+.prayer-card.next .prayer-card-inner::after {
+  content: '';
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background-color: var(--color-accent);
+  box-shadow: 0 0 8px var(--color-accent);
+  animation: pulse-dot 2s infinite;
+}
+
+@keyframes pulse-dot {
+  0% {
+    transform: scale(0.95);
+    box-shadow: 0 0 0 0 rgba(255, 193, 7, 0.5);
+  }
+  
+  70% {
+    transform: scale(1);
+    box-shadow: 0 0 0 6px rgba(255, 193, 7, 0);
+  }
+  
+  100% {
+    transform: scale(0.95);
+    box-shadow: 0 0 0 0 rgba(255, 193, 7, 0);
+  }
+}
+
+/* Style for current prayer */
+.prayer-card.active {
+  background-color: var(--color-bg-elevated);
+}
+/* Smooth settings animations with fixed pointer events */
+.settings-section-wrapper {
+  will-change: max-height, opacity;
+  transform: translateZ(0);
+  pointer-events: auto !important; /* Ensure clicks work */
+}
+
+.settings-section-content {
+  transform: translateZ(0);
+  padding-top: 0.5rem;
+  pointer-events: auto !important; /* Guarantee clickability */
+}
+
+/* Make sure all buttons are explicitly clickable */
+button, 
+select, 
+input[type="checkbox"],
+label {
+  pointer-events: auto !important; 
+}
+/* Remove existing .prayer-card.next styles */
+.prayer-card.next::before {
+  display: none;
+}
+
+.prayer-card.next {
+  position: relative;
+  border-left: none;
+  overflow: hidden;
+}
+
+/* Add elegant corner ribbon */
+.prayer-card.next::after {
+  content: 'NEXT';
+  position: absolute;
+  top: 8px;
+  right: -24px;
+  background: var(--color-accent);
+  color: var(--color-accent-dark);
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.5px;
+  padding: 2px 24px;
+  transform: rotate(45deg);
+  z-index: 2;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.2);
 }

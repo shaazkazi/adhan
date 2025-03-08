@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { FaArrowLeft, FaCog, FaBell, FaMoon, FaGlobe, FaInfoCircle, FaShareAlt } from 'react-icons/fa';
 import { useSettings } from '../contexts/SettingsContext';
@@ -485,38 +485,56 @@ const requestNotificationPermission = async () => {
                       );
                     };
                     
-                    const SettingSection = ({ icon, title, children, isActive, onClick }) => {
-                      return (
-                        <div className="border-b border-gray-100 last:border-b-0">
-                          <div
-                            className="p-4 flex justify-between items-center cursor-pointer"
-                            onClick={onClick}
-                          >
-                            <div className="flex items-center">
-                              <span className="text-primary-500 mr-3">{icon}</span>
-                              <span>{title}</span>
-                            </div>
-                            <motion.div
-                              animate={{ rotate: isActive ? 90 : 0 }}
-                              transition={{ duration: 0.2 }}
-                            >
-                              <FaArrowLeft className="transform rotate-180 text-gray-400" />
-                            </motion.div>
-                          </div>
-                          
-                          {isActive && (
-                            <motion.div
-                              className="px-4 pb-4"
-                              initial={{ opacity: 0, height: 0 }}
-                              animate={{ opacity: 1, height: 'auto' }}
-                              exit={{ opacity: 0, height: 0 }}
-                            >
-                              {children}
-                            </motion.div>
-                          )}
-                        </div>
-                      );
-                    };
+// Keep other imports as is
+
+const SettingSection = ({ icon, title, children, isActive, onClick }) => {
+  // Add ref to measure content height
+  const contentRef = useRef(null);
+  const [contentHeight, setContentHeight] = useState(0);
+  
+  // Update height measurement when isActive changes
+  useEffect(() => {
+    if (isActive && contentRef.current) {
+      setContentHeight(contentRef.current.scrollHeight);
+    }
+  }, [isActive, children]);
+  
+  return (
+    <div className="border-b border-gray-100 last:border-b-0">
+      <div
+        className="p-4 flex justify-between items-center cursor-pointer"
+        onClick={onClick}
+      >
+        <div className="flex items-center">
+          <span className="text-primary-500 mr-3">{icon}</span>
+          <span>{title}</span>
+        </div>
+        <motion.div
+          animate={{ rotate: isActive ? 90 : 0 }}
+          transition={{ duration: 0.25, ease: [0.4, 0.0, 0.2, 1] }}
+        >
+          <FaArrowLeft className="transform rotate-180 text-gray-400" />
+        </motion.div>
+      </div>
+      
+      <div 
+        className="settings-section-wrapper overflow-hidden"
+        style={{ 
+          maxHeight: isActive ? `${contentHeight}px` : 0,
+          opacity: isActive ? 1 : 0,
+          transition: `max-height 300ms cubic-bezier(0.4, 0.0, 0.2, 1), opacity 250ms ease-in-out ${isActive ? '100ms' : '0ms'}`
+        }}
+      >
+        {/* Content div with pointer-events explicitly enabled */}
+        <div className="px-4 pb-4 settings-section-content" ref={contentRef}>
+          {children}
+        </div>
+      </div>
+    </div>
+  );
+};
+
+            
                     
                     // Define FaClock since it was used in the component
                     const FaClock = () => (
