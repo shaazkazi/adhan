@@ -18,17 +18,17 @@ const SettingsPanel = () => {
 
   return (
     <motion.div
-      className="settings-card"
+      className="settings-card rounded-xl shadow-md overflow-hidden mb-4"
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ delay: 0.4 }}
     >
       <div
-        className="flex justify-between items-center cursor-pointer"
+        className="p-4 flex justify-between items-center cursor-pointer"
         onClick={() => setExpanded(!expanded)}
       >
         <div className="flex items-center">
-          <FaCog className="text-accent mr-3" />
+          <FaCog className="mr-3" />
           <h3 className="font-medium">Quick Settings</h3>
         </div>
         <motion.div
@@ -47,13 +47,11 @@ const SettingsPanel = () => {
           exit={{ opacity: 0, height: 0 }}
         >
           <div className="mb-4">
-            <p className="text-sm text-text-secondary mb-2">Time Format</p>
+            <p className="text-sm mb-2">Time Format</p>
             <div className="flex space-x-2">
               <button
                 className={`px-3 py-1 rounded-lg text-sm ${
-                  settings.timeFormat === '12h'
-                    ? 'bg-accent bg-opacity-20 text-accent'
-                    : 'bg-bg-elevated text-text-secondary'
+                  settings.timeFormat === '12h' ? 'active' : 'inactive'
                 }`}
                 onClick={() => handleTimeFormatChange('12h')}
               >
@@ -61,9 +59,7 @@ const SettingsPanel = () => {
               </button>
               <button
                 className={`px-3 py-1 rounded-lg text-sm ${
-                  settings.timeFormat === '24h'
-                    ? 'bg-accent bg-opacity-20 text-accent'
-                    : 'bg-bg-elevated text-text-secondary'
+                  settings.timeFormat === '24h' ? 'active' : 'inactive'
                 }`}
                 onClick={() => handleTimeFormatChange('24h')}
               >
@@ -73,11 +69,11 @@ const SettingsPanel = () => {
           </div>
 
           <div>
-            <p className="text-sm text-text-secondary mb-2">Calculation Method</p>
+            <p className="text-sm mb-2">Calculation Method</p>
             <select
               value={settings.calculationMethod}
               onChange={handleCalculationMethodChange}
-              className="w-full p-2 border border-border rounded-lg text-sm bg-bg-elevated text-text-primary focus:outline-none focus:ring-1 focus:ring-accent"
+              className="w-full p-2 border border-border rounded-lg text-sm focus:outline-none"
             >
               {calculationMethods.map((method) => (
                 <option key={method.id} value={method.id}>
@@ -93,4 +89,3 @@ const SettingsPanel = () => {
 };
 
 export default SettingsPanel;
-

@@ -7,7 +7,7 @@
     --color-bg-primary: #041c38;
     --color-bg-secondary: #ff8f6e;
     --color-bg-card: #0a3152;
-    --color-bg-elevated: #323232;
+    --color-bg-elevated: #123a5e;
     --color-text-primary: rgba(255, 255, 255, 0.9);
     --color-text-secondary: #ff8f6e;
     --color-text-tertiary: rgba(255, 255, 255, 0.5);
@@ -122,3 +122,40 @@
 .text-sm {
     color: #ff8f6e;
 }
+:root {
+    /* Existing variables... */
+    
+    /* Toggle and Control Variables */
+    --toggle-bg-inactive: var(--color-bg-elevated);
+    --toggle-bg-active: var(--color-accent);
+    --toggle-text-inactive: var(--color-text-secondary);
+    --toggle-text-active: var(--color-accent-dark);
+    --toggle-border-radius: 8px;
+    --toggle-transition: all 0.2s ease;
+    
+    /* Input focus effects */
+    --input-focus-ring: 0 0 0 2px rgba(255, 188, 145, 0.3);
+    --input-bg: var(--color-bg-elevated);
+    --input-border: var(--color-border);
+    --input-text: var(--color-text-primary);
+    --input-radius: 8px;
+    
+    /* Dropdown styling */
+    --dropdown-arrow-color: var(--color-accent);
+    --dropdown-padding: 0.5rem;
+  }
+  /* Settings expanded section */
+.settings-card .border-t {
+    border-top-color: var(--color-border) !important;
+  }
+  
+  /* Add a subtle glow to the active setting */
+  .settings-card button.active {
+    box-shadow: 0 0 8px rgba(255, 188, 145, 0.3);
+  }
+  
+  /* Hover effects */
+  .settings-card button:hover {
+    filter: brightness(1.1);
+  }
+  
