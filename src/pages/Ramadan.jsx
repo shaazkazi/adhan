@@ -70,17 +70,24 @@ const Ramadan = () => {
         setProgress(now < fajrTime ? 0 : 100);
        
         // Calculate time until next Fajr
-        if (now > maghribTime) {
-          const nextFajr = new Date(now.toDateString() + ' ' + prayerTimes.timings.Fajr);
-          nextFajr.setDate(nextFajr.getDate() + 1);
-         
-          const remaining = nextFajr - now;
-          const hours = Math.floor(remaining / (1000 * 60 * 60));
-          const minutes = Math.floor((remaining % (1000 * 60 * 60)) / (1000 * 60));
-          const seconds = Math.floor((remaining % (1000 * 60)) / 1000);
-         
-          setRemainingTime({ hours, minutes, seconds });
-        }
+if (now > maghribTime) {
+  const nextFajr = new Date(now.toDateString() + ' ' + prayerTimes.timings.Fajr);
+  
+  // Check if it's already after midnight but before Fajr
+  // In this case, we don't need to add an extra day
+  if (now > nextFajr) {
+    // If now is after today's Fajr time (which means Fajr already happened today),
+    // then we need tomorrow's Fajr
+    nextFajr.setDate(nextFajr.getDate() + 1);
+  }
+  
+  const remaining = nextFajr - now;
+  const hours = Math.floor(remaining / (1000 * 60 * 60));
+  const minutes = Math.floor((remaining % (1000 * 60 * 60)) / (1000 * 60));
+  const seconds = Math.floor((remaining % (1000 * 60)) / 1000);
+  
+  setRemainingTime({ hours, minutes, seconds });
+}
       }
     };
    
