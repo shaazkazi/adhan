@@ -1077,3 +1077,40 @@ label {
   z-index: 2;
   box-shadow: 0 2px 4px rgba(0,0,0,0.2);
 }
+/* Add custom breakpoint for extra small screens */
+@media (min-width: 480px) {
+  .xs\:flex-row {
+    flex-direction: row;
+  }
+  .xs\:justify-between {
+    justify-content: space-between;
+  }
+  .xs\:text-right {
+    text-align: right;
+  }
+  .xs\:text-lg {
+    font-size: 1.125rem;
+    line-height: 1.75rem;
+  }
+  .xs\:mb-0 {
+    margin-bottom: 0;
+  }
+}
+
+/* Make prayer-card-inner more adaptable for mobile */
+.prayer-card-inner {
+  padding: 12px;
+  min-height: 80px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+@media (min-width: 480px) {
+  .prayer-card-inner {
+    padding: 16px;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+  }
+}

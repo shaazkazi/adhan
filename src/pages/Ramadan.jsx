@@ -151,48 +151,65 @@ const Ramadan = () => {
               </div>
             </div>
            
-            {/* Time Cards - Using the same approach as PrayerCard.jsx */}
-            <div className="grid grid-cols-2 gap-4 mb-6">
-              {/* Fajr Card */}
-              <div className="prayer-card border border-border rounded-xl overflow-hidden shadow-md">
-                <div className="prayer-card-inner" style={getPrayerBackground('fajr')}>
-                  <div className="flex items-center">
-                    <div className="mr-3 text-white opacity-90">
-                      <FaMoon />
-                    </div>
-                    <div>
-                      <h3 className="font-semibold text-lg text-white">Fajr</h3>
-                      <p className="text-xs text-white text-opacity-80">Beginning of Fast</p>
-                    </div>
-                  </div>
-                  <div className="text-right">
-                    <h3 className="font-bold text-xl text-white">
-                      {formatTime(prayerTimes.timings.Fajr, settings.timeFormat)}
-                    </h3>
-                  </div>
-                </div>
-              </div>
-             
-              {/* Maghrib Card */}
-              <div className="prayer-card border border-border rounded-xl overflow-hidden shadow-md">
-                <div className="prayer-card-inner" style={getPrayerBackground('maghrib')}>
-                  <div className="flex items-center">
-                    <div className="mr-3 text-white opacity-90">
-                      <FaSun />
-                    </div>
-                    <div>
-                      <h3 className="font-semibold text-lg text-white">Maghrib</h3>
-                      <p className="text-xs text-white text-opacity-80">End of Fast</p>
-                    </div>
-                  </div>
-                  <div className="text-right">
-                    <h3 className="font-bold text-xl text-white">
-                      {formatTime(prayerTimes.timings.Maghrib, settings.timeFormat)}
-                    </h3>
-                  </div>
-                </div>
-              </div>
-            </div>
+            {/* Time Cards - Creative solution maintaining 2-column grid */}
+<div className="grid grid-cols-2 gap-4 mb-6">
+  {/* Fajr Card - Mobile-optimized layout */}
+  <div className="prayer-card border border-border rounded-xl overflow-hidden shadow-md">
+    <div className="prayer-card-inner" style={getPrayerBackground('fajr')}>
+      {/* Mobile: Stack layout (vertical) */}
+      <div className="flex flex-col items-center justify-center w-full xs:flex-row xs:justify-between">
+        {/* Prayer name and icon */}
+        <div className="flex items-center mb-2 xs:mb-0">
+          <div className="text-white opacity-90 mr-2">
+            <FaMoon />
+          </div>
+          <h3 className="font-semibold text-base text-white">Fajr</h3>
+        </div>
+        
+        {/* Time */}
+        <div className="text-center xs:text-right">
+          <h3 className="font-bold text-base xs:text-lg text-white">
+            {formatTime(prayerTimes.timings.Fajr, settings.timeFormat)}
+          </h3>
+        </div>
+      </div>
+      
+      {/* Label shown at bottom on smallest screens */}
+      <div className="text-center mt-1 text-xs text-white text-opacity-80">
+        Start Fast
+      </div>
+    </div>
+  </div>
+  
+  {/* Maghrib Card - Mobile-optimized layout */}
+  <div className="prayer-card border border-border rounded-xl overflow-hidden shadow-md">
+    <div className="prayer-card-inner" style={getPrayerBackground('maghrib')}>
+      {/* Mobile: Stack layout (vertical) */}
+      <div className="flex flex-col items-center justify-center w-full xs:flex-row xs:justify-between">
+        {/* Prayer name and icon */}
+        <div className="flex items-center mb-2 xs:mb-0">
+          <div className="text-white opacity-90 mr-2">
+            <FaSun />
+          </div>
+          <h3 className="font-semibold text-base text-white">Maghrib</h3>
+        </div>
+        
+        {/* Time */}
+        <div className="text-center xs:text-right">
+          <h3 className="font-bold text-base xs:text-lg text-white">
+            {formatTime(prayerTimes.timings.Maghrib, settings.timeFormat)}
+          </h3>
+        </div>
+      </div>
+      
+      {/* Label shown at bottom on smallest screens */}
+      <div className="text-center mt-1 text-xs text-white text-opacity-80">
+        End Fast
+      </div>
+    </div>
+  </div>
+</div>
+
            
             {/* Remaining Time - Theme compatible */}
             <div className="bg-bg-elevated rounded-xl p-4 text-text-primary shadow-md border border-border">
