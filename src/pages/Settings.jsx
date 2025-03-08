@@ -438,7 +438,7 @@ const requestNotificationPermission = async () => {
                                 <p className="mb-2">Version 1.0.0</p>
                                 <p className="mb-2">Prayer times powered by AlAdhan.com API.</p>
                                 <a
-                                  href="https://github.com/yourusername/adhaan-app"
+                                  href="https://github.com/shaazkazi/adhan"
                                   target="_blank"
                                   rel="noopener noreferrer"
                                   className="text-primary-600 hover:underline"
