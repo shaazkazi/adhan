@@ -75,96 +75,67 @@ const Settings = () => {
     }
   };
 
-  const requestNotificationPermission = async () => {
+  // Fix the requestNotificationPermission function:
+const requestNotificationPermission = async () => {
     if (!('Notification' in window)) {
       displayToast('Notifications not supported in this browser');
       return;
     }
-
+  
     try {
-      // Handle iOS PWA specially
-      if (isIOS && isPWA) {
-        updateSettings({
-          notifications: {
-            ...settings.notifications,
-            enabled: true
-          }
-        });
-        
-        // Try to show a test notification for iOS PWA
-        try {
-          new Notification('Adhaan - Test Notification', {
-            body: 'Notifications are now enabled for prayer times',
-            icon: '/adhaan.png'
-          });
-          displayToast('Notifications enabled for iOS');
-        } catch (err) {
-          console.error('iOS notification error:', err);
-          displayToast('Notification permission may be needed');
-        }
-        return;
-      }
-
-      if (Notification.permission === 'granted') {
-        // Already have permission
-        updateSettings({
-          notifications: {
-            ...settings.notifications,
-            enabled: true
-          }
-        });
-        registerServiceWorker();
-        displayToast('Notifications enabled');
-        return;
-      }
-
-      if (Notification.permission !== 'denied') {
+      // Important: Always request permission through the API first
+      if (Notification.permission !== 'granted' && Notification.permission !== 'denied') {
         const permission = await Notification.requestPermission();
         setPermissionStatus(permission);
         
-        if (permission === 'granted') {
-          updateSettings({
-            notifications: {
-              ...settings.notifications,
-              enabled: true
-            }
-          });
-          registerServiceWorker();
-          displayToast('Notifications enabled');
-        } else {
+        if (permission !== 'granted') {
           displayToast('Notification permission denied');
+          return;
         }
-      } else {
-        // Permission already denied
+      } else if (Notification.permission === 'denied') {
         displayToast('Please enable notifications in browser settings');
+        return;
       }
+      
+      // If we got here, permission is granted
+      updateSettings({
+        notifications: {
+          ...settings.notifications,
+          enabled: true
+        }
+      });
+      
+      // Register service worker
+      if ('serviceWorker' in navigator) {
+        registerServiceWorker();
+      }
+      
+      displayToast('Notifications enabled');
+      
+      // Send a test notification after a small delay
+      setTimeout(() => {
+        try {
+          new Notification('Adhaan - Prayer Reminder', {
+            body: 'Notifications are now enabled for prayer times',
+            icon: '/adhaan.png'
+          });
+        } catch (error) {
+          console.error('Error sending test notification:', error);
+        }
+      }, 1000);
     } catch (error) {
       console.error('Error requesting permission:', error);
       displayToast('Error enabling notifications');
     }
-  };
+  };  
 
   const registerServiceWorker = async () => {
     if ('serviceWorker' in navigator) {
       try {
-        // Unregister any existing service workers first to ensure clean state
-        const registrations = await navigator.serviceWorker.getRegistrations();
-        for (let registration of registrations) {
-          await registration.unregister();
-        }
-        
-        // Register the service worker
         const registration = await navigator.serviceWorker.register('/service-worker.js');
         console.log('Service Worker registered with scope:', registration.scope);
-        
-        // Notify user
-        displayToast('Notification service initialized');
-        
-        // Optional: Force update
-        registration.update();
       } catch (error) {
         console.error('Service Worker registration failed:', error);
-        displayToast('Error initializing notifications');
       }
     }
   };
@@ -479,11 +450,11 @@ const Settings = () => {
                           </div>
                           
                           {/* If you need to create a service worker file, inform the user */}
-                          {settings.notifications.enabled && 'serviceWorker' in navigator && !navigator.serviceWorker.controller && (
-                            <div className="text-center mt-4 text-sm text-gray-500">
-                              Initializing notifications system...
-                            </div>
-                          )}
+                          {settings.notifications.enabled && permissionStatus === 'default' && (
+  <div className="text-center mt-4 text-sm text-gray-500">
+    Waiting for notification permission...
+  </div>
+)}
                         </motion.div>
                       );
                     };

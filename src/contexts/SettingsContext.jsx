@@ -14,12 +14,13 @@ const defaultSettings = {
     isha: 0,
   },
   notifications: {
-    enabled: true,
+    enabled: false, // Ensure this is false by default
     beforePrayer: 15, // minutes
   },
   theme: 'light',
   language: 'en',
 };
+
 
 export function SettingsProvider({ children }) {
   const [settings, setSettings] = useState(() => {
