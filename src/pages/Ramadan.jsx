@@ -154,8 +154,8 @@ const Ramadan = () => {
             {/* Time Cards - Creative solution maintaining 2-column grid */}
 <div className="grid grid-cols-2 gap-4 mb-6">
   {/* Fajr Card - Mobile-optimized layout */}
-  <div className="prayer-card border border-border rounded-xl overflow-hidden shadow-md">
-    <div className="prayer-card-inner" style={getPrayerBackground('fajr')}>
+  <div className="prayer-card ramadan-prayer-card border border-border rounded-xl overflow-hidden shadow-md">
+    <div className="prayer-card-inner ramadan-card-inner" style={getPrayerBackground('fajr')}>
       {/* Mobile: Stack layout (vertical) */}
       <div className="flex flex-col items-center justify-center w-full xs:flex-row xs:justify-between">
         {/* Prayer name and icon */}
@@ -180,10 +180,10 @@ const Ramadan = () => {
       </div>
     </div>
   </div>
-  
+
   {/* Maghrib Card - Mobile-optimized layout */}
-  <div className="prayer-card border border-border rounded-xl overflow-hidden shadow-md">
-    <div className="prayer-card-inner" style={getPrayerBackground('maghrib')}>
+  <div className="prayer-card ramadan-prayer-card border border-border rounded-xl overflow-hidden shadow-md">
+    <div className="prayer-card-inner ramadan-card-inner" style={getPrayerBackground('maghrib')}>
       {/* Mobile: Stack layout (vertical) */}
       <div className="flex flex-col items-center justify-center w-full xs:flex-row xs:justify-between">
         {/* Prayer name and icon */}
