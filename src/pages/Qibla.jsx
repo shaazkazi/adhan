@@ -131,11 +131,12 @@ const Qibla = () => {
                   Compass access is required to show the Qibla direction relative to your position.
                 </p>
                 <button 
-                  onClick={requestCompassPermission}
-                  className="bg-primary-600 text-white px-4 py-2 rounded-lg"
-                >
-                  Enable Compass
-                </button>
+  onClick={requestCompassPermission}
+  className="compass-enable-btn"
+>
+  Enable Compass
+</button>
+
               </div>
             )}
             
