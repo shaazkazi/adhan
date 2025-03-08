@@ -50,10 +50,24 @@ const Settings = () => {
   };
 
   const handleThemeChange = (theme) => {
+    // Update the setting
     updateSettings({ theme });
+    
+    // Apply the theme class to the document
+    if (theme === 'light') {
+      document.documentElement.classList.add('light-theme');
+      document.documentElement.classList.remove('dark-theme');
+    } else {
+      document.documentElement.classList.add('dark-theme');
+      document.documentElement.classList.remove('light-theme');
+    }
+    
+    // Save to localStorage
+    localStorage.setItem('preferredTheme', theme);
+    
     displayToast(`${theme.charAt(0).toUpperCase() + theme.slice(1)} theme applied`);
   };
-
+  
   const handleLanguageChange = (language) => {
     updateSettings({ language });
     displayToast(`Language changed to ${language === 'en' ? 'English' : 'Arabic'}`);
@@ -208,18 +222,18 @@ const requestNotificationPermission = async () => {
           onClick={() => setActiveSection(activeSection === 'notifications' ? null : 'notifications')}
         >
           <div className="space-y-4">
-            <div className="flex items-center justify-between">
-              <span>Enable Notifications</span>
-              <label className="relative inline-flex items-center cursor-pointer">
-                <input
-                  type="checkbox"
-                  className="sr-only peer"
-                  checked={settings.notifications.enabled}
-                  onChange={handleNotificationToggle}
-                />
-                <div className="w-11 h-6 bg-gray-200 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-primary-600"></div>
-              </label>
-            </div>
+          <div className="flex items-center justify-between">
+  <span>Enable Notifications</span>
+  <label className="relative inline-flex items-center cursor-pointer notification-toggle">
+    <input
+      type="checkbox"
+      className="sr-only peer"
+      checked={settings.notifications.enabled}
+      onChange={handleNotificationToggle}
+    />
+    <div className="toggle-bg w-11 h-6 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all"></div>
+  </label>
+</div>
             
             {permissionStatus === 'denied' && (
               <div className="bg-red-50 p-3 rounded-lg text-sm text-red-600">
@@ -276,28 +290,38 @@ const requestNotificationPermission = async () => {
         </SettingSection>
         
         {/* Calculation Method */}
-        <SettingSection
-          icon={<FaCog />}
-          title="Calculation Method"
-          isActive={activeSection === 'calculation'}
-          onClick={() => setActiveSection(activeSection === 'calculation' ? null : 'calculation')}
-        >
-          <div className="space-y-2">
-            {calculationMethods.map((method) => (
-              <label key={method.id} className="flex items-center space-x-2">
-                <input
-                  type="radio"
-                  name="calculationMethod"
-                  value={method.id}
-                  checked={settings.calculationMethod === method.id}
-                  onChange={(e) => handleCalculationMethodChange(e.target.value)}
-                  className="text-primary-600 focus:ring-primary-500"
-                />
-                <span>{method.name}</span>
-              </label>
-            ))}
+<SettingSection
+  icon={<FaCog />}
+  title="Calculation Method"
+  isActive={activeSection === 'calculation'}
+  onClick={() => setActiveSection(activeSection === 'calculation' ? null : 'calculation')}
+>
+  <div className="space-y-3">
+    {calculationMethods.map((method) => (
+      <button
+        key={method.id}
+        onClick={() => handleCalculationMethodChange(method.id)}
+        className={`w-full text-left p-3 rounded-lg transition-all duration-200 ${
+          settings.calculationMethod === method.id
+            ? 'bg-accent text-accent-dark font-medium'
+            : 'bg-bg-elevated text-text-secondary hover:bg-opacity-80'
+        }`}
+      >
+        <div>
+          <div className={`font-medium ${settings.calculationMethod === method.id ? 'text-accent-dark' : ''}`}>
+            {method.name}
           </div>
-        </SettingSection>
+          {method.description && (
+            <div className={`text-xs mt-1 ${settings.calculationMethod === method.id ? 'text-accent-dark opacity-80' : 'opacity-90'}`}>
+              {method.description}
+            </div>
+          )}
+        </div>
+      </button>
+    ))}
+  </div>
+</SettingSection>
+
         
         {/* Prayer Time Adjustments */}
         <SettingSection
@@ -334,97 +358,99 @@ const requestNotificationPermission = async () => {
                             </SettingSection>
                             
                             {/* Time Format */}
-                            <SettingSection
-                              icon={<FaClock />}
-                              title="Time Format"
-                              isActive={activeSection === 'timeFormat'}
-                              onClick={() => setActiveSection(activeSection === 'timeFormat' ? null : 'timeFormat')}
-                            >
-                              <div className="flex space-x-4">
-                                <button
-                                  onClick={() => handleTimeFormat('12h')}
-                                  className={`px-4 py-2 rounded-lg ${
-                                    settings.timeFormat === '12h'
-                                      ? 'active'
-                                      : 'inactive'
-                                  }`}
-                                >
-                                  12 Hour
-                                </button>
-                                <button
-                                  onClick={() => handleTimeFormat('24h')}
-                                  className={`px-4 py-2 rounded-lg ${
-                                    settings.timeFormat === '24h'
-                                      ? 'active'
-                                      : 'inactive'
-                                  }`}
-                                >
-                                  24 Hour
-                                </button>
-                              </div>
-                            </SettingSection>
+<SettingSection
+  icon={<FaClock />}
+  title="Time Format"
+  isActive={activeSection === 'timeFormat'}
+  onClick={() => setActiveSection(activeSection === 'timeFormat' ? null : 'timeFormat')}
+>
+  <div className="flex space-x-4">
+    <button
+      onClick={() => handleTimeFormat('12h')}
+      className={`px-4 py-2 rounded-lg transition-all duration-200 ${
+        settings.timeFormat === '12h'
+          ? 'bg-accent text-accent-dark font-medium'
+          : 'bg-bg-elevated text-text-secondary hover:bg-opacity-80'
+      }`}
+    >
+      12 Hour
+    </button>
+    <button
+      onClick={() => handleTimeFormat('24h')}
+      className={`px-4 py-2 rounded-lg transition-all duration-200 ${
+        settings.timeFormat === '24h'
+          ? 'bg-accent text-accent-dark font-medium'
+          : 'bg-bg-elevated text-text-secondary hover:bg-opacity-80'
+      }`}
+    >
+      24 Hour
+    </button>
+  </div>
+</SettingSection>
+
                             
                             {/* Theme */}
-                            <SettingSection
-                              icon={<FaMoon />}
-                              title="Theme"
-                              isActive={activeSection === 'theme'}
-                              onClick={() => setActiveSection(activeSection === 'theme' ? null : 'theme')}
-                            >
-                              <div className="flex space-x-4">
-                                <button
-                                  onClick={() => handleThemeChange('light')}
-                                  className={`px-4 py-2 rounded-lg ${
-                                    settings.theme === 'light'
-                                      ? 'active'
-                                      : 'inactive'
-                                  }`}
-                                >
-                                  Light
-                                </button>
-                                <button
-                                  onClick={() => handleThemeChange('dark')}
-                                  className={`px-4 py-2 rounded-lg ${
-                                    settings.theme === 'dark'
-                                      ? 'active'
-                                      : 'inactive'
-                                  }`}
-                                >
-                                  Dark
-                                </button>
-                              </div>
-                            </SettingSection>
+<SettingSection
+  icon={<FaMoon />}
+  title="Theme"
+  isActive={activeSection === 'theme'}
+  onClick={() => setActiveSection(activeSection === 'theme' ? null : 'theme')}
+>
+  <div className="flex space-x-4">
+    <button
+      onClick={() => handleThemeChange('light')}
+      className={`px-4 py-2 rounded-lg transition-all duration-200 ${
+        settings.theme === 'light'
+          ? 'bg-accent text-accent-dark font-medium'
+          : 'bg-bg-elevated text-text-secondary hover:bg-opacity-80'
+      }`}
+    >
+      Light
+    </button>
+    <button
+      onClick={() => handleThemeChange('dark')}
+      className={`px-4 py-2 rounded-lg transition-all duration-200 ${
+        settings.theme === 'dark'
+          ? 'bg-accent text-accent-dark font-medium'
+          : 'bg-bg-elevated text-text-secondary hover:bg-opacity-80'
+      }`}
+    >
+      Dark
+    </button>
+  </div>
+</SettingSection>
                             
                             {/* Language */}
-                            <SettingSection
-                              icon={<FaGlobe />}
-                              title="Language"
-                              isActive={activeSection === 'language'}
-                              onClick={() => setActiveSection(activeSection === 'language' ? null : 'language')}
-                            >
-                              <div className="grid grid-cols-2 gap-2">
-                                <button
-                                  onClick={() => handleLanguageChange('en')}
-                                  className={`px-4 py-2 rounded-lg ${
-                                    settings.language === 'en'
-                                      ? 'active'
-                                      : 'inactive'
-                                  }`}
-                                >
-                                  English
-                                </button>
-                                <button
-                                  onClick={() => handleLanguageChange('ar')}
-                                  className={`px-4 py-2 rounded-lg ${
-                                    settings.language === 'ar'
-                                      ? 'active'
-                                      : 'inactive'
-                                  }`}
-                                >
-                                  Arabic
-                                </button>
-                              </div>
-                            </SettingSection>
+<SettingSection
+  icon={<FaGlobe />}
+  title="Language"
+  isActive={activeSection === 'language'}
+  onClick={() => setActiveSection(activeSection === 'language' ? null : 'language')}
+>
+  <div className="grid grid-cols-2 gap-2">
+    <button
+      onClick={() => handleLanguageChange('en')}
+      className={`px-4 py-2 rounded-lg transition-all duration-200 ${
+        settings.language === 'en'
+          ? 'bg-accent text-accent-dark font-medium'
+          : 'bg-bg-elevated text-text-secondary hover:bg-opacity-80'
+      }`}
+    >
+      English
+    </button>
+    <button
+      onClick={() => handleLanguageChange('ar')}
+      className={`px-4 py-2 rounded-lg transition-all duration-200 ${
+        settings.language === 'ar'
+          ? 'bg-accent text-accent-dark font-medium'
+          : 'bg-bg-elevated text-text-secondary hover:bg-opacity-80'
+      }`}
+    >
+      Arabic
+    </button>
+  </div>
+</SettingSection>
+
                             
                             {/* About */}
                             <SettingSection

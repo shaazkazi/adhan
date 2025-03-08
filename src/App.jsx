@@ -6,15 +6,15 @@ import { motion, AnimatePresence } from 'framer-motion';
 import Home from './pages/Home';
 import Qibla from './pages/Qibla';
 import Settings from './pages/Settings';
-import Ramadan from './pages/Ramadan'; // Add Ramadan page import
+import Ramadan from './pages/Ramadan';
 
 // Components
 import Header from './components/Header';
-import { FaMosque, FaCompass, FaCog, FaMoon } from 'react-icons/fa'; // Add FaMoon icon
+import { FaMosque, FaCompass, FaCog, FaMoon } from 'react-icons/fa';
 
 // Contexts
 import { LocationProvider } from './contexts/LocationContext';
-import { SettingsProvider } from './contexts/SettingsContext';
+import { SettingsProvider, useSettings } from './contexts/SettingsContext';
 
 // Main app component
 function App() {
@@ -54,11 +54,71 @@ function PageTransitionBackdrop() {
 // App root with access to router hooks
 function AppRoot() {
   const location = useLocation();
+  const { settings, updateSettings } = useSettings();
+  
+  // Theme persistence with localStorage - runs only once on mount
+  useEffect(() => {
+    // Load theme from localStorage
+    const savedTheme = localStorage.getItem('preferredTheme');
+    
+    if (savedTheme) {
+      // Only update if the current theme doesn't match saved theme
+      if (settings.theme !== savedTheme) {
+        // Apply saved theme to DOM
+        if (savedTheme === 'light') {
+          document.documentElement.classList.add('light-theme');
+          document.documentElement.classList.remove('dark-theme');
+        } else {
+          document.documentElement.classList.add('dark-theme');
+          document.documentElement.classList.remove('light-theme');
+        }
+        
+        // Update the settings context to match
+        updateSettings({ theme: savedTheme });
+      }
+    } else {
+      // Default theme if none saved, don't update settings if it already has a theme
+      if (!settings.theme) {
+        const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+        const defaultTheme = prefersDark ? 'dark' : 'light';
+        
+        if (defaultTheme === 'light') {
+          document.documentElement.classList.add('light-theme');
+        }
+        
+        // Save the default preference
+        localStorage.setItem('preferredTheme', defaultTheme);
+        
+        // Update settings context with default theme
+        updateSettings({ theme: defaultTheme });
+      }
+    }
+    // We include settings.theme in the dependency array to ensure this effect
+    // correctly handles the theme state on first render
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
  
+  // Separate effect to apply theme changes when settings.theme changes
+  useEffect(() => {
+    if (settings.theme) {
+      // Save to localStorage whenever theme changes through settings
+      localStorage.setItem('preferredTheme', settings.theme);
+      
+      // Apply theme class
+      if (settings.theme === 'light') {
+        document.documentElement.classList.add('light-theme');
+        document.documentElement.classList.remove('dark-theme');
+      } else {
+        document.documentElement.classList.add('dark-theme');
+        document.documentElement.classList.remove('light-theme');
+      }
+    }
+  }, [settings.theme]);
+  
   // Determine active tab based on current path
   const getActiveTab = (path) => {
     if (path.startsWith('/qibla')) return 'qibla';
-    if (path.startsWith('/ramadan')) return 'ramadan'; // Add ramadan check
+    if (path.startsWith('/ramadan')) return 'ramadan';
     if (path.startsWith('/settings')) return 'settings';
     return 'home';
   };
@@ -87,7 +147,7 @@ function AppRoot() {
               <Routes location={location}>
                 <Route path="/" element={<Home />} />
                 <Route path="/qibla" element={<Qibla />} />
-                <Route path="/ramadan" element={<Ramadan />} /> {/* Add Ramadan route */}
+                <Route path="/ramadan" element={<Ramadan />} />
                 <Route path="/settings" element={<Settings />} />
                 <Route path="*" element={<Navigate to="/" replace />} />
               </Routes>
@@ -108,7 +168,6 @@ function AppRoot() {
             isActive={activeTab === 'qibla'}
             to="/qibla"
           />
-          {/* Add Ramadan NavButton */}
           <NavButton
             icon={<FaMoon className="text-xl" />}
             label="Ramadan"

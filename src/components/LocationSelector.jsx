@@ -36,14 +36,14 @@ const LocationSelector = () => {
   const selectLocation = (result) => {
     const city = result.address.city || result.address.town || result.address.village || result.address.hamlet || '';
     const country = result.address.country || '';
-    
+   
     setManualLocation(
       city,
       country,
       parseFloat(result.lat),
       parseFloat(result.lon)
     );
-    
+   
     setShowSearch(false);
     setSearchResults([]);
     setSearchQuery('');
@@ -57,7 +57,7 @@ const LocationSelector = () => {
         animate={{ opacity: 1, y: 0 }}
         transition={{ delay: 0.2 }}
       >
-        <FaMapMarkerAlt className="text-primary-500" />
+        <FaMapMarkerAlt className="text-primary-500 mr-2" />
         <div className="flex-1">
           {location.city && location.country ? (
             <p className="text-sm">{`${location.city}, ${location.country}`}</p>
@@ -67,7 +67,7 @@ const LocationSelector = () => {
         </div>
         <button
           onClick={() => setShowSearch(!showSearch)}
-          className="text-primary-600 text-sm font-medium"
+          className="location-change-btn"
         >
           Change
         </button>
@@ -103,11 +103,11 @@ const LocationSelector = () => {
                 const city = result.address.city || result.address.town || result.address.village || result.address.hamlet || '';
                 const country = result.address.country || '';
                 const displayName = city ? `${city}, ${country}` : result.display_name;
-                
+               
                 return (
                   <div
                     key={result.place_id}
-                    className="py-2 px-3 hover:bg-gray-100 cursor-pointer rounded-lg"
+                    className="location-search-result"
                     onClick={() => selectLocation(result)}
                   >
                     <p className="text-sm font-medium">{displayName}</p>
@@ -118,19 +118,19 @@ const LocationSelector = () => {
             </div>
           )}
 
-          <div className="mt-3 flex justify-between">
+          <div className="location-search-actions">
             <button
               onClick={() => {
                 setShowSearch(false);
                 setSearchResults([]);
               }}
-              className="text-gray-500 text-sm"
+              className="cancel-btn"
             >
               Cancel
             </button>
             <button
               onClick={useCurrentLocation}
-              className="text-primary-600 text-sm font-medium"
+              className="use-current-btn"
             >
               Use Current Location
             </button>

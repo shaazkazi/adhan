@@ -49,15 +49,16 @@ export async function fetchQiblaDirection(latitude, longitude) {
 }
 
 export const calculationMethods = [
-  { id: 1, name: 'Muslim World League' },
-  { id: 2, name: 'Islamic Society of North America (ISNA)' },
-  { id: 3, name: 'Egyptian General Authority of Survey' },
-  { id: 4, name: 'Umm al-Qura University, Makkah' },
-  { id: 5, name: 'University of Islamic Sciences, Karachi' },
-  { id: 7, name: 'Institute of Geophysics, University of Tehran' },
-  { id: 12, name: 'Union des organisations islamiques de France' },
-  { id: 13, name: 'Majlis Ugama Islam Singapura' },
-  { id: 14, name: 'Gulf Region' },
-  { id: 15, name: 'Kuwait' },
-  { id: 16, name: 'Qatar' },
+  { id: 0, name: "Muslim World League", description: "Standard method used by many global organizations" },
+  { id: 1, name: "Islamic Society of North America (ISNA)", description: "Used in most of North America" },
+  { id: 2, name: "Egyptian General Authority of Survey", description: "Used in Egypt and many African countries" },
+  { id: 3, name: "Umm al-Qura University, Makkah", description: "Used in Saudi Arabia" },
+  { id: 4, name: "University of Islamic Sciences, Karachi", description: "Used in Pakistan and South Asia" },
+  { id: 5, name: "Institute of Geophysics, University of Tehran", description: "Used in Iran and some Shia communities" },
+  { id: 7, name: "Union des organisations islamiques de France", description: "Used in France" },
+  { id: 8, name: "Majlis Ugama Islam Singapore", description: "Used in Singapore" },
+  { id: 9, name: "Gulf Region", description: "Used in Gulf countries" },
+  { id: 10, name: "Kuwait", description: "Kuwait's official calculation method" },
+  { id: 11, name: "Qatar", description: "Qatar's official calculation method" },
 ];
+

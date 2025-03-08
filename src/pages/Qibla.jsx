@@ -177,15 +177,15 @@ const Qibla = () => {
                 {/* Qibla Pointer */}
                 <motion.div
                   className="qibla-pointer"
-                  style={{ transform: `rotate(${calculateQiblaRotation()}deg)` }}
-                >
-                  <div className="qibla-pointer-inner">
-                    <div className="qibla-pointer-dot"></div>
-                    <div className="qibla-pointer-line"></div>
-                    <div className="qibla-pointer-line bottom"></div>
-                    <div className="qibla-pointer-dot"></div>
-                  </div>
-                </motion.div>
+  style={{ transform: `rotate(${calculateQiblaRotation()}deg)` }}
+>
+  <div className="qibla-pointer-inner">
+    <div className="qibla-pointer-dot"></div>
+    <div className="qibla-pointer-line"></div>
+    <div className="qibla-pointer-line bottom"></div>
+    <div className="qibla-pointer-dot"></div>
+  </div>
+</motion.div>
               </div>
             )}
             

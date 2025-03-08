@@ -78,38 +78,45 @@ const useAdhanTimes = (latitude, longitude, date, method = 2) => {
     getPrayerTimes();
   }, [latitude, longitude, formattedDate, method, cacheKey]);
 
-  // Calculate next prayer
-  const calculateNextPrayer = (data) => {
-    if (!data || !data.timings) return;
+  // Modify the calculateNextPrayer function
+const calculateNextPrayer = (data) => {
+  if (!data || !data.timings) return;
 
-    const prayerOrder = ['Fajr', 'Sunrise', 'Dhuhr', 'Asr', 'Maghrib', 'Isha'];
-    const now = new Date();
-    let nextPrayerName = '';
-    let nextPrayerTime = null;
+  const prayerOrder = ['Fajr', 'Sunrise', 'Dhuhr', 'Asr', 'Maghrib', 'Isha'];
+  const now = new Date();
+  let nextPrayerName = '';
+  let nextPrayerTime = null;
 
-    for (const prayer of prayerOrder) {
-      const prayerTime = convertToDate(data.timings[prayer]);
-      if (prayerTime > now) {
-        nextPrayerName = prayer;
-        nextPrayerTime = prayerTime;
-        break;
-      }
+  for (const prayer of prayerOrder) {
+    const prayerTime = convertToDate(data.timings[prayer]);
+    if (prayerTime > now) {
+      nextPrayerName = prayer;
+      nextPrayerTime = prayerTime;
+      break;
     }
+  }
 
-    // If no next prayer found, it means all prayers for today have passed
-    // Set the next prayer as tomorrow's Fajr
-    if (!nextPrayerName) {
-      nextPrayerName = 'Fajr';
-      const tomorrow = new Date();
-      tomorrow.setDate(tomorrow.getDate() + 1);
-      // To implement: Fetch tomorrow's prayer times
-    }
+  // If no next prayer found, it means all prayers for today have passed
+  // Set the next prayer as tomorrow's Fajr
+  if (!nextPrayerName) {
+    nextPrayerName = 'Fajr';
+    
+    // Create a time for tomorrow's Fajr based on today's Fajr time
+    const tomorrow = new Date();
+    tomorrow.setDate(tomorrow.getDate() + 1);
+    
+    // Use today's Fajr time but for tomorrow's date
+    const [hours, minutes] = data.timings.Fajr.split(':').map(Number);
+    tomorrow.setHours(hours, minutes, 0, 0);
+    
+    nextPrayerTime = tomorrow;
+  }
 
-    setNextPrayer({
-      name: nextPrayerName,
-      time: nextPrayerTime
-    });
-  };
+  setNextPrayer({
+    name: nextPrayerName,
+    time: nextPrayerTime
+  });
+};
 
   // Helper to convert time string to Date object
   const convertToDate = (timeString) => {

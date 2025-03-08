@@ -1,93 +1,124 @@
 :root {
-    /* Base colors */
-    --color-white: #ffffff;
-    --color-black: #000000;
-   
-    /* Dark theme colors - inspired by Pillars app */
-    --color-bg-primary: #041c38;
-    --color-bg-secondary: #ff8f6e;
-    --color-bg-card: #0a3152;
-    --color-bg-elevated: #123a5e;
-    --color-text-primary: rgba(255, 255, 255, 0.9);
-    --color-text-secondary: #ff8f6e;
-    --color-text-tertiary: rgba(255, 255, 255, 0.5);
-    --color-border: rgba(255, 255, 255, 0.1);
-    --color-accent: #64b5f6; /* A subtle blue accent */
-   
-    /* Prayer times background colors - updated to dark blue theme */
-    --prayer-bg-fajr: linear-gradient(135deg, #041c38, #0a2d4e);
-    --prayer-bg-sunrise: linear-gradient(135deg, #041c38, #082845);
-    --prayer-bg-dhuhr: linear-gradient(135deg, #041c38, #0a3152);
-    --prayer-bg-asr: linear-gradient(135deg, #041c38, #072440);
-    --prayer-bg-maghrib: linear-gradient(135deg, #041c38, #0b2e55);
-    --prayer-bg-isha: linear-gradient(135deg, #041c38, #04162e);
-   
-    /* Shadows for dark mode */
-    --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.3);
-    --shadow-md: 0 4px 6px rgba(0, 0, 0, 0.4);
-    --shadow-lg: 0 10px 15px rgba(0, 0, 0, 0.5);
- 
-    /* Spacing Variables */
-    --spacing-xs: 0.25rem;
-    --spacing-sm: 0.5rem;
-    --spacing-md: 1rem;
-    --spacing-lg: 1.5rem;
-    --spacing-xl: 2rem;
-    --spacing-2xl: 3rem;
- 
-    /* Border Radius */
-    --radius-sm: 0.25rem;
-    --radius-md: 0.5rem;
-    --radius-lg: 0.75rem;
-    --radius-xl: 1rem;
-    --radius-2xl: 1.5rem;
-    --radius-full: 9999px;
- 
-    /* Font Sizes */
-    --font-size-xs: 0.75rem;
-    --font-size-sm: 0.875rem;
-    --font-size-md: 1rem;
-    --font-size-lg: 1.125rem;
-    --font-size-xl: 1.25rem;
-    --font-size-2xl: 1.5rem;
-    --font-size-3xl: 1.875rem;
-    --font-size-4xl: 2.25rem;
- 
-    /* Font Weights */
-    --font-weight-light: 300;
-    --font-weight-regular: 400;
-    --font-weight-medium: 500;
-    --font-weight-semibold: 600;
-    --font-weight-bold: 700;
- 
-    /* Animation Durations */
-    --duration-fast: 150ms;
-    --duration-normal: 300ms;
-    --duration-slow: 500ms;
- 
-    /* Z-index values */
-    --z-index-dropdown: 1000;
-    --z-index-modal: 1050;
-    --z-index-tooltip: 1100;
+  /* Base colors */
+  --color-white: #ffffff;
+  --color-black: #000000;
+  
+  /* Dark theme colors (default) */
+  --color-bg-primary: #041c38;
+  --color-bg-secondary: #082845;
+  --color-bg-card: #0a3152;
+  --color-bg-elevated: #123a5e;
+  --color-text-primary: #ffffff;
+  --color-text-secondary: rgba(255, 255, 255, 0.8);
+  --color-text-tertiary: rgba(255, 255, 255, 0.6);
+  --color-border: rgba(255, 255, 255, 0.15);
+  --color-accent: #FFC107;
+  --color-accent-dark: #041c38;
+  
+  /* Prayer times background colors */
+  --prayer-bg-fajr: linear-gradient(135deg, #041c38, #0a2d4e);
+  --prayer-bg-sunrise: linear-gradient(135deg, #041c38, #082845);
+  --prayer-bg-dhuhr: linear-gradient(135deg, #041c38, #0a3152);
+  --prayer-bg-asr: linear-gradient(135deg, #041c38, #072440);
+  --prayer-bg-maghrib: linear-gradient(135deg, #041c38, #0b2e55);
+  --prayer-bg-isha: linear-gradient(135deg, #041c38, #04162e);
+  
+  /* Shadows */
+  --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.3);
+  --shadow-md: 0 4px 6px rgba(0, 0, 0, 0.4);
+  --shadow-lg: 0 10px 15px rgba(0, 0, 0, 0.5);
+  
+  /* Spacing Variables */
+  --spacing-xs: 0.25rem;
+  --spacing-sm: 0.5rem;
+  --spacing-md: 1rem;
+  --spacing-lg: 1.5rem;
+  --spacing-xl: 2rem;
+  --spacing-2xl: 3rem;
+  
+  /* Border Radius */
+  --radius-sm: 0.25rem;
+  --radius-md: 0.5rem;
+  --radius-lg: 0.75rem;
+  --radius-xl: 1rem;
+  --radius-2xl: 1.5rem;
+  --radius-full: 9999px;
+  
+  /* Font Sizes */
+  --font-size-xs: 0.75rem;
+  --font-size-sm: 0.875rem;
+  --font-size-md: 1rem;
+  --font-size-lg: 1.125rem;
+  --font-size-xl: 1.25rem;
+  --font-size-2xl: 1.5rem;
+  --font-size-3xl: 1.875rem;
+  --font-size-4xl: 2.25rem;
+  
+  /* Font Weights */
+  --font-weight-light: 300;
+  --font-weight-regular: 400;
+  --font-weight-medium: 500;
+  --font-weight-semibold: 600;
+  --font-weight-bold: 700;
+  
+  /* Animation Durations */
+  --duration-fast: 150ms;
+  --duration-normal: 300ms;
+  --duration-slow: 500ms;
+  
+  /* Z-index values */
+  --z-index-dropdown: 1000;
+  --z-index-modal: 1050;
+  --z-index-tooltip: 1100;
+  
+  /* UI Control Variables */
+  --toggle-bg-inactive: var(--color-bg-elevated);
+  --toggle-bg-active: var(--color-accent);
+  --toggle-text-inactive: var(--color-text-secondary);
+  --toggle-text-active: var(--color-accent-dark);
+  --toggle-border-radius: 8px;
+  --toggle-transition: all 0.2s ease;
+  
+  /* Input focus effects */
+  --input-focus-ring: 0 0 0 2px rgba(255, 188, 145, 0.3);
+  --input-bg: var(--color-bg-elevated);
+  --input-border: var(--color-border);
+  --input-text: var(--color-text-primary);
+  --input-radius: 8px;
+  
+  /* Dropdown styling */
+  --dropdown-arrow-color: var(--color-accent);
+  --dropdown-padding: 0.5rem;
 }
 
-/* For possible light mode toggle in the future */
+/* Light theme */
 .light-theme {
-    --color-bg-primary: #f8f9fa;
-    --color-bg-secondary: #ffffff;
-    --color-bg-card: #ffffff;
-    --color-bg-elevated: #f0f2f5;
-    --color-text-primary: rgba(0, 0, 0, 0.9);
-    --color-text-secondary: rgba(0, 0, 0, 0.7);
-    --color-text-tertiary: rgba(0, 0, 0, 0.5);
-    --color-border: rgba(0, 0, 0, 0.1);
- 
-    /* Shadows for light mode */
-    --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.05);
-    --shadow-md: 0 4px 6px rgba(0, 0, 0, 0.1);
-    --shadow-lg: 0 10px 15px rgba(0, 0, 0, 0.1);
+  --color-bg-primary: #f8f9fa;
+  --color-bg-secondary: #ffffff;
+  --color-bg-card: #ffffff;
+  --color-bg-elevated: #f0f2f5;
+  --color-text-primary: #333333;
+  --color-text-secondary: rgba(0, 0, 0, 0.7);
+  --color-text-tertiary: rgba(0, 0, 0, 0.5);
+  --color-border: rgba(0, 0, 0, 0.1);
+  --color-accent: #041c38;
+  --color-accent-dark: #ffffff;
+  
+  /* Shadows for light mode */
+  --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.05);
+  --shadow-md: 0 4px 6px rgba(0, 0, 0, 0.1);
+  --shadow-lg: 0 10px 15px rgba(0, 0, 0, 0.1);
+  
+  /* Light mode prayer backgrounds - optional */
+  --prayer-bg-fajr: linear-gradient(135deg, #e6f0ff, #cce0ff);
+  --prayer-bg-sunrise: linear-gradient(135deg, #fff4e6, #ffe0cc);
+  --prayer-bg-dhuhr: linear-gradient(135deg, #e6f9ff, #ccf2ff);
+  --prayer-bg-asr: linear-gradient(135deg, #e6fff9, #ccfff2);
+  --prayer-bg-maghrib: linear-gradient(135deg, #fff1e6, #ffe6cc);
+  --prayer-bg-isha: linear-gradient(135deg, #e6e6ff, #ccccff);
 }
 
+/* Component-specific styling */
 /* Target specific component headings */
 .next-prayer-container h2,
 .next-prayer-container h3,
@@ -97,65 +128,50 @@
 .app-header h3,
 .settings-card h2,
 .settings-card h3 {
-    color: #fff;
+  color: #fff;
 }
 
 /* Add white border to prayer cards */
 .prayer-card {
-    border: 1px solid rgba(255, 255, 255, 0.15);
+  border: 1px solid rgba(255, 255, 255, 0.15);
 }
 
 /* Special styling for next and active cards */
 .prayer-card.next {
-    border: 1px solid rgba(255, 255, 255, 0.3);
+  border: 1px solid rgba(255, 255, 255, 0.3);
 }
 
 .prayer-card.active {
-    border: 1px solid rgba(255, 255, 255, 0.25);
+  border: 1px solid rgba(255, 255, 255, 0.25);
 }
+
 /* Style for Hijri date text */
-.hijri-date p,
-.hijri-date {
-  color: #ff8f6e;
-}
-.text-sm p,
-.text-sm {
-    color: #ff8f6e;
-}
-:root {
-    /* Existing variables... */
-    
-    /* Toggle and Control Variables */
-    --toggle-bg-inactive: var(--color-bg-elevated);
-    --toggle-bg-active: var(--color-accent);
-    --toggle-text-inactive: var(--color-text-secondary);
-    --toggle-text-active: var(--color-accent-dark);
-    --toggle-border-radius: 8px;
-    --toggle-transition: all 0.2s ease;
-    
-    /* Input focus effects */
-    --input-focus-ring: 0 0 0 2px rgba(255, 188, 145, 0.3);
-    --input-bg: var(--color-bg-elevated);
-    --input-border: var(--color-border);
-    --input-text: var(--color-text-primary);
-    --input-radius: 8px;
-    
-    /* Dropdown styling */
-    --dropdown-arrow-color: var(--color-accent);
-    --dropdown-padding: 0.5rem;
-  }
-  /* Settings expanded section */
+
+/* Settings expanded section */
 .settings-card .border-t {
-    border-top-color: var(--color-border) !important;
-  }
-  
-  /* Add a subtle glow to the active setting */
-  .settings-card button.active {
-    box-shadow: 0 0 8px rgba(255, 188, 145, 0.3);
-  }
-  
-  /* Hover effects */
-  .settings-card button:hover {
-    filter: brightness(1.1);
-  }
-  
+  border-top-color: var(--color-border) !important;
+}
+
+/* Add a subtle glow to the active setting */
+.settings-card button.active {
+  box-shadow: 0 0 8px rgba(255, 188, 145, 0.3);
+  background-color: var(--color-accent) !important;
+  color: var(--color-accent-dark) !important;
+  font-weight: 500;
+}
+
+/* Inactive button styling */
+.settings-card button.inactive {
+  background-color: var(--color-bg-elevated) !important;
+  color: var(--color-text-secondary) !important;
+}
+
+/* Hover effects */
+.settings-card button:hover {
+  filter: brightness(1.1);
+}
+
+/* Font for timer */
+.font-mono {
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+}

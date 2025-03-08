@@ -4,9 +4,12 @@ import { getTimeRemaining } from '../utils/timeUtils';
 
 const NextPrayer = ({ nextPrayer }) => {
   const [remaining, setRemaining] = useState({ hours: 0, minutes: 0, seconds: 0 });
-
+  
   useEffect(() => {
-    if (!nextPrayer.time) return;
+    // Debug log to check what data is being received
+    console.log("NextPrayer received:", nextPrayer);
+    
+    if (!nextPrayer || !nextPrayer.time) return;
 
     const timer = setInterval(() => {
       const timeLeft = getTimeRemaining(nextPrayer.time);
@@ -14,9 +17,10 @@ const NextPrayer = ({ nextPrayer }) => {
     }, 1000);
 
     return () => clearInterval(timer);
-  }, [nextPrayer.time]);
+  }, [nextPrayer]);
 
-  if (!nextPrayer.time) {
+  // Added safer check to prevent errors
+  if (!nextPrayer || !nextPrayer.time) {
     return null;
   }
 
@@ -29,10 +33,8 @@ const NextPrayer = ({ nextPrayer }) => {
     >
       <div className="flex items-center justify-between mb-2">
         <h2 className="text-base font-medium text-white opacity-80">Next Prayer</h2>
-        
-        {/* Subtle indicator with custom animation */}
         <div className="flex items-center">
-          <div className="indicator-dot mr-1.5"></div>
+          <div className="w-2 h-2 bg-green-400 rounded-full animate-pulse mr-1.5"></div>
           <span className="text-xs font-medium text-green-400">Coming up</span>
         </div>
       </div>

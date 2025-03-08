@@ -1,7 +1,8 @@
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
 @import "tailwindcss";
+
 :root {
-  /* New color scheme */
+  /* Dark mode (default) color scheme */
   --color-bg-primary: #041c38;
   --color-bg-secondary: #082845;
   --color-bg-card: #0a3152;
@@ -10,10 +11,10 @@
   --color-text-secondary: rgba(255, 255, 255, 0.8);
   --color-text-tertiary: rgba(255, 255, 255, 0.6);
   --color-border: rgba(255, 255, 255, 0.15);
-  --color-accent: #ffbc91; /* Peach/coral accent */
+  --color-accent: #FFC107; /* Golden accent */
   --color-accent-dark: #041c38; /* Dark blue for contrast with accent */
   
-  /* Prayer gradients - keeping as requested */
+  /* Prayer gradients - dark theme */
   --prayer-bg-fajr: linear-gradient(135deg, #263238, #37474F);
   --prayer-bg-sunrise: linear-gradient(135deg, #4a2c1a, #5d4037);
   --prayer-bg-dhuhr: linear-gradient(135deg, #1a237e, #303f9f);
@@ -25,6 +26,45 @@
   --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.3);
   --shadow-md: 0 4px 6px rgba(0, 0, 0, 0.4);
   --shadow-lg: 0 10px 15px rgba(0, 0, 0, 0.5);
+  
+  /* Other variables */
+  --hijri-date-color: #ff8f6e;
+  --next-prayer-name-color: #FFC107;
+  --next-prayer-badge-color: #4ade80;
+  --next-indicator-color: #FFC107;
+}
+
+/* Light theme overrides */
+.light-theme {
+  --color-bg-primary: #f8f9fa;
+  --color-bg-secondary: #ffffff;
+  --color-bg-card: #ffffff;
+  --color-bg-elevated: #f0f2f5;
+  --color-text-primary: #333333;
+  --color-text-secondary: rgba(0, 0, 0, 0.7);
+  --color-text-tertiary: rgba(0, 0, 0, 0.5);
+  --color-border: rgba(0, 0, 0, 0.1);
+  --color-accent: #FFC107; /* Keep golden accent */
+  --color-accent-dark: #333333; /* Dark gray for contrast with accent */
+
+  /* Prayer gradients - light theme */
+  --prayer-bg-fajr: linear-gradient(135deg, #e3f2fd, #bbdefb);
+  --prayer-bg-sunrise: linear-gradient(135deg, #fff3e0, #ffe0b2);
+  --prayer-bg-dhuhr: linear-gradient(135deg, #e8eaf6, #c5cae9);
+  --prayer-bg-asr: linear-gradient(135deg, #e8f5e9, #c8e6c9);
+  --prayer-bg-maghrib: linear-gradient(135deg, #fff3e0, #ffccbc);
+  --prayer-bg-isha: linear-gradient(135deg, #e1f5fe, #b3e5fc);
+  
+  /* Shadows for light mode */
+  --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.05);
+  --shadow-md: 0 4px 6px rgba(0, 0, 0, 0.1);
+  --shadow-lg: 0 10px 15px rgba(0, 0, 0, 0.1);
+  
+  /* Other variables */
+  --hijri-date-color: #f57c00;
+  --next-prayer-name-color: #f57c00;
+  --next-prayer-badge-color: #22c55e;
+  --next-indicator-color: #f57c00;
 }
 
 /* Base styles */
@@ -36,7 +76,7 @@ body {
   -moz-osx-font-smoothing: grayscale;
 }
 
-/* Typography improvements */
+/* Typography adjustments */
 h1, h2, h3, h4, h5, h6 {
   font-weight: 600;
   letter-spacing: -0.02em;
@@ -75,10 +115,9 @@ p, span, div {
   opacity: 0.9;
 }
 
-
 .prayer-card.active {
   box-shadow: var(--shadow-md);
-  border: 1px solid rgba(255, 255, 255, 0.3);
+  border: 1px solid var(--color-accent);
 }
 
 .prayer-card-inner {
@@ -88,9 +127,9 @@ p, span, div {
   align-items: center;
 }
 
-/* Next prayer container - dark elegant style */
+/* Next prayer container - theme-compatible styling */
 .next-prayer-container {
-  background: rgba(10, 49, 82, 0.9);
+  background: var(--color-bg-card);
   border-radius: 20px;
   padding: 20px;
   margin-bottom: 24px;
@@ -100,9 +139,12 @@ p, span, div {
   -webkit-backdrop-filter: blur(10px);
 }
 
-.next-prayer-container h2, 
+.next-prayer-container h2 {
+  color: var(--color-text-secondary);
+}
+
 .next-prayer-container h3 {
-  color: var(--color-accent);
+  color: var(--next-prayer-name-color);
 }
 
 /* Header styling */
@@ -120,7 +162,7 @@ p, span, div {
   bottom: 0;
   left: 0;
   right: 0;
-  background-color: rgba(4, 28, 56, 0.95);
+  background-color: var(--color-bg-card);
   backdrop-filter: blur(10px);
   -webkit-backdrop-filter: blur(10px);
   display: flex;
@@ -138,10 +180,18 @@ p, span, div {
   justify-content: center;
   color: var(--color-text-tertiary);
   transition: color 0.2s ease;
+  padding: 8px 16px;
+  border-radius: 8px;
+  outline: none !important;
 }
 
 .nav-item.active {
   color: var(--color-accent);
+  background-color: rgba(255, 255, 255, 0.05);
+}
+
+.light-theme .nav-item.active {
+  background-color: rgba(0, 0, 0, 0.05);
 }
 
 .nav-item-text {
@@ -165,7 +215,7 @@ p, span, div {
 .hijri-date {
   font-family: 'Inter', sans-serif;
   font-size: 16px;
-  color: var(--color-text-secondary);
+  color: var(--hijri-date-color);
   margin-bottom: 16px;
   padding: 12px;
   background-color: var(--color-bg-card);
@@ -192,8 +242,7 @@ p, span, div {
 }
 
 .btn-primary:hover {
-  background-color: var(--color-accent-dark);
-  color: var(--color-accent);
+  opacity: 0.9;
 }
 
 .btn-primary:active {
@@ -216,43 +265,26 @@ p, span, div {
   background-color: rgba(255, 188, 145, 0.2);
 }
 
-/* Animation fixes */
-@keyframes pulsate {
-  0% {
-    transform: scale(1);
-    opacity: 1;
-  }
-  50% {
-    transform: scale(1.02);
-    opacity: 0.95;
-  }
-  100% {
-    transform: scale(1);
-    opacity: 1;
-  }
-}
-
-
-/* Dark scrollbar styling */
+/* Dark scrollbar styling - adjusted for themes */
 ::-webkit-scrollbar {
   width: 6px;
   height: 6px;
 }
 
 ::-webkit-scrollbar-track {
-  background: rgba(255, 255, 255, 0.05);
+  background: var(--color-bg-elevated);
 }
 
 ::-webkit-scrollbar-thumb {
-  background: rgba(255, 255, 255, 0.2);
+  background: var(--color-text-tertiary);
   border-radius: 10px;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: rgba(255, 255, 255, 0.3);
+  background: var(--color-text-secondary);
 }
 
-/* Card component for settings, qibla, etc. */
+/* Card component styling - works with both themes */
 .settings-card,
 .qibla-card,
 .info-card {
@@ -288,7 +320,7 @@ p, span, div {
   transform: scale(0.99);
 }
 
-/* Colors for text elements */
+/* Helper color classes - maintain theme awareness */
 .text-accent {
   color: var(--color-accent);
 }
@@ -305,7 +337,6 @@ p, span, div {
   color: var(--color-text-tertiary);
 }
 
-/* Background colors */
 .bg-bg-primary {
   background-color: var(--color-bg-primary);
 }
@@ -326,12 +357,11 @@ p, span, div {
   background-color: var(--color-accent);
 }
 
-/* Border colors */
 .border-border {
   border-color: var(--color-border);
 }
 
-/* Fix for class-based colors */
+/* Compatibility fixes for utility classes */
 .text-primary-500,
 .text-primary-600, 
 .text-primary-700 {
@@ -339,7 +369,7 @@ p, span, div {
 }
 
 .bg-primary-100 {
-  background-color: rgba(255, 188, 145, 0.2) !important;
+  background-color: var(--color-bg-elevated) !important;
   color: var(--color-text-primary) !important;
 }
 
@@ -370,7 +400,8 @@ select, input, textarea {
 
 select:focus, input:focus, textarea:focus {
   outline: none;
-  box-shadow: 0 0 0 2px rgba(255, 188, 145, 0.5);
+  box-shadow: 0 0 0 2px rgba(255, 193, 7, 0.5);
+  border-color: var(--color-accent) !important;
 }
 
 /* Fix for white backgrounds */
@@ -389,6 +420,7 @@ select:focus, input:focus, textarea:focus {
   color: var(--color-accent); 
 }
 
+.settings-card h2,
 .settings-card h3 {
   color: var(--color-accent);
 }
@@ -400,6 +432,7 @@ select:focus, input:focus, textarea:focus {
 
 /* Time format buttons - fix for active state */
 .settings-card button.active,
+.calculation-method-active,
 .settings-card button[class*="bg-accent"],
 .settings-card button[class*="bg-primary-100"] {
   background-color: var(--color-accent) !important;
@@ -409,6 +442,7 @@ select:focus, input:focus, textarea:focus {
 
 /* Time format buttons - fix for inactive state */
 .settings-card button.inactive,
+.calculation-method-inactive,
 .settings-card button[class*="bg-bg-elevated"],
 .settings-card button[class*="bg-gray-100"] {
   background-color: var(--color-bg-elevated) !important;
@@ -430,7 +464,7 @@ body .bg-accent.text-accent {
   color: var(--color-accent-dark) !important;
 }
 
-/* Additional classes for the new color scheme */
+/* Additional classes for the color scheme */
 .text-accent-dark {
   color: var(--color-accent-dark);
 }
@@ -438,112 +472,8 @@ body .bg-accent.text-accent {
 .bg-accent-dark {
   background-color: var(--color-accent-dark);
 }
+
 /* Add this to prevent white flash */
-html, body {
-  background-color: var(--color-bg-primary);
-}
-
-/* Improve transitions */
-.page-transition-enter {
-  opacity: 0;
-}
-.page-transition-enter-active {
-  opacity: 1;
-  transition: opacity 200ms;
-}
-.page-transition-exit {
-  opacity: 1;
-}
-.page-transition-exit-active {
-  opacity: 0;
-  transition: opacity 200ms;
-}
-/* Compass styles */
-.compass-container {
-  position: relative;
-  width: 24rem;
-  height: 24rem;
-  margin: 0 auto;
-  padding: 1rem;
-  border-radius: 50%;
-  background: radial-gradient(circle, var(--color-bg-secondary) 0%, var(--color-bg-primary) 70%);
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5), inset 0 2px 10px rgba(255, 255, 255, 0.1);
-  border: 1px solid rgba(255, 255, 255, 0.1);
-}
-
-/* Add glow effect to the compass */
-.compass-container::before {
-  content: '';
-  position: absolute;
-  top: -5px;
-  left: -5px;
-  right: -5px;
-  bottom: -5px;
-  border-radius: 50%;
-  background: radial-gradient(circle, rgba(255, 188, 145, 0.2) 0%, transparent 70%);
-  z-index: -1;
-}
-
-/* Improve SVG visibility on dark backgrounds */
-.compass-container img {
-  filter: drop-shadow(0 0 5px rgba(255, 255, 255, 0.2));
-  /* If the SVG is too dark, uncomment this to add brightness */
-  /* filter: brightness(1.2) contrast(1.1) drop-shadow(0 0 5px rgba(255, 255, 255, 0.2)); */
-}
-
-/* Qibla pointer styling */
-.qibla-pointer {
-  position: absolute;
-  inset: 0;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  pointer-events: none; /* Allows clicking through to the compass */
-}
-
-.qibla-pointer-inner {
-  width: 6px;
-  height: 100%;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: space-between;
-  padding: 10px 0;
-}
-
-.qibla-pointer-dot {
-  width: 12px;
-  height: 12px;
-  border-radius: 50%;
-  background-color: var(--color-accent);
-  box-shadow: 0 0 10px var(--color-accent), 0 0 5px rgba(255, 255, 255, 0.5);
-}
-
-.qibla-pointer-line {
-  flex: 1;
-  width: 2px;
-  background: linear-gradient(to bottom, var(--color-accent), transparent);
-  margin: 2px 0;
-}
-
-.qibla-pointer-line.bottom {
-  background: linear-gradient(to top, var(--color-accent), transparent);
-}
-
-/* Direction labels */
-.compass-direction {
-  position: absolute;
-  font-weight: bold;
-  font-size: 1rem;
-  color: var(--color-accent);
-}
-
-.compass-direction.north { top: 10px; left: 50%; transform: translateX(-50%); }
-.compass-direction.east { right: 10px; top: 50%; transform: translateY(-50%); }
-.compass-direction.south { bottom: 10px; left: 50%; transform: translateX(-50%); }
-.compass-direction.west { left: 10px; top: 50%; transform: translateY(-50%); }
-/* Critical: Apply background color to all root elements */
-/* Add to index.css to prevent white flashes */
 html, body, #root {
   background-color: var(--color-bg-primary);
   height: 100%;
@@ -562,8 +492,21 @@ html, body, #root {
   background-color: var(--color-bg-primary);
 }
 
-/* Fix for any potential flashes in transitions */
-
+/* Page transition animations */
+.page-transition-enter {
+  opacity: 0;
+}
+.page-transition-enter-active {
+  opacity: 1;
+  transition: opacity 200ms;
+}
+.page-transition-exit {
+  opacity: 1;
+}
+.page-transition-exit-active {
+  opacity: 0;
+  transition: opacity 200ms;
+}
 
 /* Fix for nav item boxes/outlines */
 .nav-bar a {
@@ -588,10 +531,7 @@ html, body, #root {
 
 /* Better padding for nav items to create a proper touch target */
 .nav-item {
-  padding: 8px 16px;
-  border-radius: 8px;
   transition: background-color 0.3s ease;
-  outline: none !important;
 }
 
 /* Hover effect for non-active items */
@@ -599,21 +539,20 @@ html, body, #root {
   background-color: rgba(255, 255, 255, 0.05);
 }
 
-/* Active nav item style */
-.nav-item.active {
-  background-color: rgba(255, 255, 255, 0.05);
+.light-theme .nav-item:hover {
+  background-color: rgba(0, 0, 0, 0.05);
 }
 
 /* Ensure hover on active item maintains the same background */
 .nav-item.active:hover {
   background-color: rgba(255, 255, 255, 0.05);
 }
-/* Remove any existing animations for prayer cards */
-.prayer-card.next .prayer-card-inner {
-  animation: none;
+
+.light-theme .nav-item.active:hover {
+  background-color: rgba(0, 0, 0, 0.05);
 }
 
-/* Add a subtle indicator for next prayer */
+/* Prayer card styling for next prayer */
 .prayer-card.next {
   position: relative;
   border-left: 3px solid var(--color-accent);
@@ -641,46 +580,9 @@ html, body, #root {
 .prayer-card:hover {
   box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
 }
-/* Settings Panel specific styling */
-.settings-card {
-  background-color: var(--color-bg-card);
-  border: 1px solid var(--color-border);
-  box-shadow: var(--shadow-sm);
-}
 
-.settings-card h3 {
-  color: var(--color-accent);
-  font-weight: 600;
-}
-
-.settings-card svg {
-  color: var(--color-accent);
-}
-
-/* Option buttons - active state */
-.settings-card button.active,
-.settings-card button[class*="bg-accent"] {
-  background-color: var(--color-accent) !important;
-  color: var(--color-accent-dark) !important;
-  font-weight: 500;
-  border-radius: 8px;
-  transition: all 0.2s ease;
-}
-
-/* Option buttons - inactive state */
-.settings-card button.inactive,
-.settings-card button[class*="bg-bg-elevated"] {
-  background-color: var(--color-bg-elevated) !important;
-  color: var(--color-text-secondary) !important;
-  border-radius: 8px;
-  transition: all 0.2s ease;
-}
-
-/* Settings labels */
-.settings-card p.text-sm {
-  color: var(--color-text-secondary);
-  margin-bottom: 0.5rem;
-  font-weight: 500;
+.light-theme .prayer-card:hover {
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
 }
 
 /* Dropdown styling */
@@ -692,93 +594,29 @@ html, body, #root {
   padding: 0.5rem;
   width: 100%;
   appearance: none;
-  background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23ffbc91' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e");
+  background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23FFC107' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e");
   background-repeat: no-repeat;
   background-position: right 0.5rem center;
   background-size: 1.5em;
 }
 
-.settings-card select:focus {
-  outline: none;
-  box-shadow: 0 0 0 2px rgba(255, 188, 145, 0.3);
-}
-/* Compass styles */
+/* Compass styles - common across themes */
 .compass-container {
   position: relative;
-  width: 24rem;
-  height: 24rem;
+  width: min(100%, 300px);
+  height: min(100%, 300px);
+  aspect-ratio: 1/1;
   margin: 0 auto;
-  padding: 1rem;
+  padding: 0.5rem;
   border-radius: 50%;
   background: radial-gradient(circle, var(--color-bg-secondary) 0%, var(--color-bg-primary) 70%);
   box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5), inset 0 2px 10px rgba(255, 255, 255, 0.1);
-  border: 1px solid rgba(255, 255, 255, 0.1);
+  border: 1px solid var(--color-border);
+  overflow: hidden;
 }
 
-.compass-direction {
-  position: absolute;
-  font-weight: bold;
-  font-size: 1rem;
-  color: var(--color-accent);
-}
-
-.compass-direction.north { top: 10px; left: 50%; transform: translateX(-50%); }
-.compass-direction.east { right: 10px; top: 50%; transform: translateY(-50%); }
-.compass-direction.south { bottom: 10px; left: 50%; transform: translateX(-50%); }
-.compass-direction.west { left: 10px; top: 50%; transform: translateY(-50%); }
-
-.qibla-pointer {
-  position: absolute;
-  inset: 0;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  pointer-events: none;
-}
-
-.qibla-pointer-inner {
-  width: 6px;
-  height: 100%;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: space-between;
-  padding: 10px 0;
-}
-
-.qibla-pointer-dot {
-  width: 12px;
-  height: 12px;
-  border-radius: 50%;
-  background-color: var(--color-accent);
-  box-shadow: 0 0 10px var(--color-accent), 0 0 5px rgba(255, 255, 255, 0.5);
-}
-
-.qibla-pointer-line {
-  flex: 1;
-  width: 2px;
-  background: linear-gradient(to bottom, var(--color-accent), transparent);
-  margin: 2px 0;
-}
-
-.qibla-pointer-line.bottom {
-  background: linear-gradient(to top, var(--color-accent), transparent);
-}
-/* Add this to index.css */
-/* Compass styles */
-.compass-container {
-  position: relative;
-  width: 24rem;
-  height: 24rem;
-  max-width: 90vw;
-  max-height: 90vw;
-  margin: 0 auto;
-  padding: 1rem;
-  border-radius: 50%;
-  background: radial-gradient(circle, var(--color-bg-secondary) 0%, var(--color-bg-primary) 70%);
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5), inset 0 2px 10px rgba(255, 255, 255, 0.1);
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  overflow: hidden; /* Prevent overflow */
+.light-theme .compass-container {
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15), inset 0 2px 10px rgba(0, 0, 0, 0.05);
 }
 
 /* Add glow effect to the compass */
@@ -790,7 +628,7 @@ html, body, #root {
   right: -5px;
   bottom: -5px;
   border-radius: 50%;
-  background: radial-gradient(circle, rgba(255, 188, 145, 0.2) 0%, transparent 70%);
+  background: radial-gradient(circle, rgba(255, 193, 7, 0.2) 0%, transparent 70%);
   z-index: -1;
 }
 
@@ -798,7 +636,7 @@ html, body, #root {
 .compass-direction {
   position: absolute;
   font-weight: bold;
-  font-size: 1rem;
+  font-size: clamp(0.75rem, 2vw, 1rem);
   color: var(--color-accent);
 }
 
@@ -846,6 +684,7 @@ html, body, #root {
   background: linear-gradient(to top, var(--color-accent), transparent);
 }
 
+
 /* Enable compass button styling */
 .compass-enable-btn {
   background-color: var(--color-accent);
@@ -860,44 +699,225 @@ html, body, #root {
 .compass-enable-btn:hover {
   filter: brightness(1.1);
 }
-/* Updated compass container CSS for better mobile responsiveness */
-.compass-container {
-  position: relative;
-  width: min(100%, 300px); /* Use min() function for responsive sizing */
-  height: min(100%, 300px);
-  aspect-ratio: 1/1; /* Maintain perfect circle */
-  margin: 0 auto;
-  padding: 0.5rem; /* Smaller padding on mobile */
+
+/* Indicator dot animation */
+.indicator-dot {
+  width: 6px;
+  height: 6px;
   border-radius: 50%;
-  background: radial-gradient(circle, var(--color-bg-secondary) 0%, var(--color-bg-primary) 70%);
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5), inset 0 2px 10px rgba(255, 255, 255, 0.1);
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  overflow: hidden;
+  background-color: var(--next-prayer-badge-color);
+  position: relative;
+  display: inline-block;
+  animation: pulse 2s infinite;
 }
 
-/* Make direction labels responsive */
-.compass-direction {
-  position: absolute;
-  font-weight: bold;
-  font-size: clamp(0.75rem, 2vw, 1rem); /* Responsive font size */
+@keyframes pulse {
+  0% {
+    transform: scale(0.95);
+    box-shadow: 0 0 0 0 rgba(74, 222, 128, 0.7);
+  }
+  
+  70% {
+    transform: scale(1);
+    box-shadow: 0 0 0 5px rgba(74, 222, 128, 0);
+  }
+  
+  100% {
+    transform: scale(0.95);
+    box-shadow: 0 0 0 0 rgba(74, 222, 128, 0);
+  }
+}
+
+/* Light theme adjustments for specific components */
+.light-theme .next-prayer-container {
+  background: rgba(255, 255, 255, 0.9);
+}
+
+.light-theme .next-prayer-container h2,
+.light-theme .next-prayer-container h3,
+.light-theme .prayer-card h2,
+.light-theme .prayer-card h3,
+.light-theme .app-header h2,
+.light-theme .app-header h3,
+.light-theme .settings-card h2,
+.light-theme .settings-card h3 {
   color: var(--color-accent);
 }
 
-/* Adjust pointer dots for smaller screens */
-.qibla-pointer-dot {
-  width: clamp(8px, 2vw, 12px);
-  height: clamp(8px, 2vw, 12px);
+.light-theme .indicator-dot {
+  background-color: var(--next-prayer-badge-color);
 }
 
-/* Media query for very small screens */
-@media (max-width: 320px) {
-  .compass-container {
-    width: 90vw;
-    height: 90vw;
-    padding: 0.25rem;
+@keyframes pulse-light {
+  0% {
+    transform: scale(0.95);
+    box-shadow: 0 0 0 0 rgba(34, 197, 94, 0.7);
   }
   
-  .qibla-pointer-inner {
-    padding: 5px 0;
+  70% {
+    transform: scale(1);
+    box-shadow: 0 0 0 5px rgba(34, 197, 94, 0);
   }
+  
+  100% {
+    transform: scale(0.95);
+    box-shadow: 0 0 0 0 rgba(34, 197, 94, 0);
+  }
+}
+
+.light-theme .indicator-dot {
+  animation: pulse-light 2s infinite;
+}
+
+/* Fix for extra white flash prevention */
+@media (prefers-color-scheme: dark) {
+  html, body {
+    background-color: #041c38;
+  }
+}
+
+@media (prefers-color-scheme: light) {
+  .light-theme html, 
+  .light-theme body {
+    background-color: #f8f9fa;
+  }
+}
+/* Toggle switch styling for dark/light theme compatibility */
+.theme-toggle-switch {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+}
+
+.theme-toggle-switch input[type="checkbox"] {
+  height: 0;
+  width: 0;
+  visibility: hidden;
+  position: absolute;
+}
+
+.theme-toggle-switch .toggle-bg {
+  width: 44px;
+  height: 24px;
+  background-color: var(--color-bg-elevated);
+  border: 1px solid var(--color-border);
+  display: block;
+  border-radius: 100px;
+  position: relative;
+  transition: all 0.3s ease;
+}
+
+.theme-toggle-switch input:checked + .toggle-bg {
+  background-color: var(--color-accent);
+}
+
+.theme-toggle-switch .toggle-bg:after {
+  content: '';
+  position: absolute;
+  top: 2px;
+  left: 2px;
+  width: 18px;
+  height: 18px;
+  background: #fff;
+  border-radius: 100%;
+  transition: all 0.3s ease;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
+}
+
+.theme-toggle-switch input:checked + .toggle-bg:after {
+  left: calc(100% - 2px);
+  transform: translateX(-100%);
+}
+
+.theme-toggle-switch:active .toggle-bg:after {
+  width: 26px;
+}
+
+/* Notification toggle specific styling */
+.notification-toggle input:checked + .toggle-bg {
+  background-color: var(--color-accent);
+}
+
+.light-theme .notification-toggle input:checked + .toggle-bg {
+  background-color: var(--color-accent);
+}
+
+.notification-toggle .toggle-bg {
+  background-color: #e5e7eb; /* gray-200 in Tailwind */
+}
+
+.light-theme .notification-toggle .toggle-bg {
+  background-color: #e5e7eb;
+}
+/* Location selector button styling */
+.location-selector button {
+  transition: all 0.2s ease;
+  border-radius: 6px;
+  padding: 6px 10px;
+}
+
+.location-selector .location-change-btn {
+  background-color: var(--color-accent);
+  color: var(--color-accent-dark);
+  font-weight: 500;
+  font-size: 0.875rem;
+}
+
+.location-selector .location-change-btn:hover {
+  opacity: 0.9;
+}
+
+.location-selector .location-change-btn:active {
+  transform: scale(0.98);
+}
+
+/* Location search buttons */
+.location-search-actions {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 12px;
+}
+
+.location-search-actions button {
+  padding: 8px 12px;
+  border-radius: 8px;
+  font-size: 0.875rem;
+  transition: all 0.2s ease;
+}
+
+.location-search-actions .cancel-btn {
+  color: var(--color-text-secondary);
+  background-color: var(--color-bg-elevated);
+  border: 1px solid var(--color-border);
+}
+
+.location-search-actions .use-current-btn {
+  background-color: var(--color-accent);
+  color: var(--color-accent-dark);
+  font-weight: 500;
+}
+
+.location-search-actions button:hover {
+  opacity: 0.9;
+}
+
+.location-search-actions button:active {
+  transform: scale(0.98);
+}
+
+/* Search results hover styling */
+.location-search-result {
+  padding: 10px;
+  border-radius: 8px;
+  margin-bottom: 4px;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+
+.location-search-result:hover {
+  background-color: var(--color-bg-elevated);
+}
+
+.light-theme .location-search-result:hover {
+  background-color: rgba(0, 0, 0, 0.05);
 }
